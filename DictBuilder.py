@@ -1,3 +1,29 @@
+def filter_event(event):
+    '''(list of str) -> bool
+
+    Returns True if trace event is a write event and a complete event
+
+    e.g.
+    >>>filter_event(['8,16', '2', '14722', '73.165905398', '0', 'C', 'WS', '12858376', '+', '32', '[0]'])
+    True
+
+    >>>filter_event(['8,16', '2', '10013', '16.774178596', '3929', 'C', 'R', '5149344', '+', '120', '[0]'])
+    False
+
+    >>>filter_event(['8,16', '1', '14483', '615.865377616', '3997', 'D', 'W', '7240192', '+', '1536', '[kworker/u8:0]'])
+    False
+    '''
+    
+    # If the event is not some type of write ('W', 'WS', or 'WM' in column 6), return False
+    if event[6][0] != 'W':
+        return False
+    # If event is not the completed part of the transaction ('C' in column 5), return False
+    elif event[5] != 'C':
+        return False
+    else:
+        return True
+
+
 def get_blocks(event, sectors_per_block):
     '''(list of str) -> list of int
     
@@ -63,3 +89,28 @@ def update_dict(event, sectors_per_block, freq_dict):
     blocks = get_blocks(event, sectors_per_block)
     add_to_dict(blocks, freq_dict)
     return freq_dict
+
+
+def build_dict(trace_file, sectors_per_block):
+    '''(file) -> dict of int:int
+
+    e.g.
+    >>>build_dict('blkparseout_ext4.txt', 8)
+    {}
+    '''
+    freq_dict = {}
+    trace_data = open(trace_file, 'r')
+    # Read events from the trace file and put in a list one-by-one
+    for event in trace_data:
+        event = event.split()
+        # Stop when you get to the metadata at the end and return updated dict
+        if event[0] == 'CPU0':
+            trace_data.close()
+            return freq_dict
+        # For each event, check if it's a complete write and if so, update dict
+        else:
+            if filter_event(event) == False:
+                continue
+            elif filter_event(event) == True:
+                freq_dict = update_dict(event, sectors_per_block, freq_dict)
+                continue
