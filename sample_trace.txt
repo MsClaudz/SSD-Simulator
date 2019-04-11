@@ -1,0 +1,52 @@
+  8,16   3    13036    75.768822269  3936  C  WS 6810456 + 264 [0]
+  8,16   3    13037    75.768829729  3936  C  WS 6810720 + 264 [0]
+  8,16   3    13038    75.768833091  3936  C  WS 6810984 + 264 [0]
+  8,16   3    13040    75.769246242  3936  C  WS 6811248 + 264 [0]
+  8,16   3    13063    75.769984984  3936  C  WS 6810456 + 136 [0]
+  8,16   3    13064    75.770397980  3936  C  WS 6810984 + 264 [0]
+  8,16   3    13065    75.770401137  3936  C  WS 6811912 + 264 [0]
+  8,16   3    13066    75.770403100  3936  C  WS 6812176 + 264 [0]
+CPU0 (8,16):
+ Reads Queued:           0,        0KiB	 Writes Queued:           0,        0KiB
+ Read Dispatches:     3270,   380048KiB	 Write Dispatches:       69,    26596KiB
+ Reads Requeued:         0		 Writes Requeued:         0
+ Reads Completed:     3270,   380048KiB	 Writes Completed:       68,    26340KiB
+ Read Merges:            0,        0KiB	 Write Merges:            0,        0KiB
+ Read depth:             7        	 Write depth:            33
+ IO unplugs:             0        	 Timer unplugs:           0
+CPU1 (8,16):
+ Reads Queued:           0,        0KiB	 Writes Queued:           0,        0KiB
+ Read Dispatches:     1854,   204108KiB	 Write Dispatches:      349,   130584KiB
+ Reads Requeued:         0		 Writes Requeued:         0
+ Reads Completed:     1854,   204108KiB	 Writes Completed:      350,   130820KiB
+ Read Merges:            0,        0KiB	 Write Merges:            0,        0KiB
+ Read depth:             7        	 Write depth:            33
+ IO unplugs:             0        	 Timer unplugs:           0
+CPU2 (8,16):
+ Reads Queued:           0,        0KiB	 Writes Queued:           0,        0KiB
+ Read Dispatches:     2104,   233648KiB	 Write Dispatches:      130,     5116KiB
+ Reads Requeued:         0		 Writes Requeued:         0
+ Reads Completed:     2104,   233648KiB	 Writes Completed:      131,     5268KiB
+ Read Merges:            0,        0KiB	 Write Merges:            0,        0KiB
+ Read depth:             7        	 Write depth:            33
+ IO unplugs:             0        	 Timer unplugs:           0
+CPU3 (8,16):
+ Reads Queued:           0,        0KiB	 Writes Queued:           0,        0KiB
+ Read Dispatches:     1811,   205268KiB	 Write Dispatches:      300,    83744KiB
+ Reads Requeued:         0		 Writes Requeued:         0
+ Reads Completed:     1811,   205268KiB	 Writes Completed:      299,    83612KiB
+ Read Merges:            0,        0KiB	 Write Merges:            0,        0KiB
+ Read depth:             7        	 Write depth:            33
+ IO unplugs:             0        	 Timer unplugs:           0
+
+Total (8,16):
+ Reads Queued:           0,        0KiB	 Writes Queued:           0,        0KiB
+ Read Dispatches:     9039,     1023MiB	 Write Dispatches:      848,   246040KiB
+ Reads Requeued:         0		 Writes Requeued:         0
+ Reads Completed:     9039,     1023MiB	 Writes Completed:      848,   246040KiB
+ Read Merges:            0,        0KiB	 Write Merges:            0,        0KiB
+ IO unplugs:             0        	 Timer unplugs:           0
+
+Throughput (R/W): 0KiB/s / 0KiB/s
+Events (8,16): 29662 entries
+Skips: 0 forward (0 -   0.0%)
