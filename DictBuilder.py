@@ -11,11 +11,18 @@ def get_blocks(event, sectors_per_block):
     [8697448]
     '''
     # Get start block and request size from columns 7 and 9 of event, convert them to integer
-    start_block = int(event[7])
-    req_size = int(event[9])
+    
+    ## Our traces:
+    # start_block = int(event[7])
+    # req_size = int(event[9])
+
+    ## FIU traces (different output format):
+    start_block = int(event[3])
+    req_size = int(event[4])
+
     # Determine end block, also convert to integer
     end_block = int(start_block + (req_size / sectors_per_block))
-    # Make list of all effected blocks and return the list
+    # Make list of all affected blocks and return the list
     blocks = list(range(start_block, end_block))
     return(blocks)
 
@@ -52,8 +59,8 @@ def add_to_dict(blocks, freq_dict):
 def build_dict(trace_file, sectors_per_block):
     '''(file) -> dict of int:int
 
-    Reads data from a trace file, then calls add_to_dict and get_blocks to build a dictionary tracking the 
-    number of times logical blocks were updated.
+    Reads data from a trace file, then calls add_to_dict and get_blocks to populate a dictionary 
+    with logical block update frequencies.
 
     e.g.
     >>>build_dict('blkparseout.txt', 8)
@@ -64,15 +71,18 @@ def build_dict(trace_file, sectors_per_block):
     # Read events from the trace file and put in a list one-by-one
     for event in trace_data:
         event = event.split()
-        # Stop when you get to the metadata at the end and return updated dict
-        if event[0] == 'CPU0':
-            trace_data.close()
-            return freq_dict
         # For each event, check if it's a complete write and if so, update dict
-        else:
-            if (event[6][0] != 'W') or (event[5] != 'C'):
+        try:
+            ## Our traces:
+            # if (event[6][0] != 'W') or (event[5] != 'C'):
+            ## FIU traces:
+            if event[5][0] != 'W':
                 continue
             else:
                 add_to_dict((get_blocks(event, sectors_per_block)), freq_dict)
                 continue
+        # But, exclude lines from the file that are not trace events
+        except IndexError:
+            continue
+    # Return updated dict
     return freq_dict
