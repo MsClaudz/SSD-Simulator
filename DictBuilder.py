@@ -1,5 +1,5 @@
 def get_blocks(event, sectors_per_block):
-    '''(list of str) -> list of int
+    '''(list of str, int) -> list of int
     
     Makes a list of all blocks affected by an IO trace event.
 
@@ -28,7 +28,7 @@ def get_blocks(event, sectors_per_block):
 
 
 def add_to_dict(blocks, freq_dict):
-    '''(list of int) -> dict of int:int
+    '''(list of int, dict of int:int) -> dict of int:int
     
     Takes a list of logical blocks affected by a trace event and increments their values by +1 in a dictionary.
 
@@ -57,7 +57,7 @@ def add_to_dict(blocks, freq_dict):
 
 
 def build_dict(trace_file, sectors_per_block):
-    '''(file) -> dict of int:int
+    '''(txt file, int) -> dict of int:int
 
     Reads data from a trace file, then calls add_to_dict and get_blocks to populate a dictionary 
     with logical block update frequencies.
