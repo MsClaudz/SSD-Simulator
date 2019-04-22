@@ -1,33 +1,7 @@
-def filter_event(event):
-    '''(list of str) -> bool
-
-    Returns True if trace event is a write event and a complete event
-
-    e.g.
-    >>>filter_event(['8,16', '2', '14722', '73.165905398', '0', 'C', 'WS', '12858376', '+', '32', '[0]'])
-    True
-
-    >>>filter_event(['8,16', '2', '10013', '16.774178596', '3929', 'C', 'R', '5149344', '+', '120', '[0]'])
-    False
-
-    >>>filter_event(['8,16', '1', '14483', '615.865377616', '3997', 'D', 'W', '7240192', '+', '1536', '[kworker/u8:0]'])
-    False
-    '''
-    
-    # If the event is not some type of write ('W', 'WS', or 'WM' in column 6), return False
-    if event[6][0] != 'W':
-        return False
-    # If event is not the completed part of the transaction ('C' in column 5), return False
-    elif event[5] != 'C':
-        return False
-    else:
-        return True
-
-
 def get_blocks(event, sectors_per_block):
     '''(list of str) -> list of int
     
-    Makes a list of all blocks effected by an IO trace event.
+    Makes a list of all blocks affected by an IO trace event.
 
     e.g.
     >>>get_blocks(['8,16', '2', '14722', '73.165905398', '0', 'C', 'WS', '12858376', '+', '32', '[0]'], 8)
@@ -49,8 +23,7 @@ def get_blocks(event, sectors_per_block):
 def add_to_dict(blocks, freq_dict):
     '''(list of int) -> dict of int:int
     
-    Adds to a dictionary tracking the number of times logical blocks have been updated.
-    Takes a list of updated logical blocks and increments their values by +1 in the dictionary.
+    Takes a list of logical blocks affected by a trace event and increments their values by +1 in a dictionary.
 
     e.g.
     >>>add_to_dict([8697448], {})
@@ -76,27 +49,15 @@ def add_to_dict(blocks, freq_dict):
     return freq_dict
 
 
-def update_dict(event, sectors_per_block, freq_dict):
-    '''(list of str, int, dict of int:int) -> dict of int:int
-
-    Combines functionality of get_blocks and add_to_dict.
-    Takes an IO event and increments update frequencies for effected blocks by +1 in a dictionary.
-
-    e.g.
-    update_dict(['8,16', '2', '14722', '73.165905398', '0', 'C', 'WS', '12858376', '+', '32', '[0]'], 8, {})
-    {12858376: 1, 12858377: 1, 12858378: 1, 12858379: 1}
-    '''
-    blocks = get_blocks(event, sectors_per_block)
-    add_to_dict(blocks, freq_dict)
-    return freq_dict
-
-
 def build_dict(trace_file, sectors_per_block):
     '''(file) -> dict of int:int
 
+    Reads data from a trace file, then calls add_to_dict and get_blocks to build a dictionary tracking the 
+    number of times logical blocks were updated.
+
     e.g.
-    >>>build_dict('blkparseout_ext4.txt', 8)
-    {}
+    >>>build_dict('blkparseout.txt', 8)
+    {6810720: 1, 6810721: 3, 6810722: 2, 6810723: 5, 6810724: 8}
     '''
     freq_dict = {}
     trace_data = open(trace_file, 'r')
@@ -109,8 +70,9 @@ def build_dict(trace_file, sectors_per_block):
             return freq_dict
         # For each event, check if it's a complete write and if so, update dict
         else:
-            if filter_event(event) == False:
+            if (event[6][0] != 'W') or (event[5] != 'C'):
                 continue
-            elif filter_event(event) == True:
-                freq_dict = update_dict(event, sectors_per_block, freq_dict)
+            else:
+                add_to_dict((get_blocks(event, sectors_per_block)), freq_dict)
                 continue
+    return freq_dict
