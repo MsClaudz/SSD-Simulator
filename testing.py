@@ -10,11 +10,12 @@ sectors_per_block = 8
 freq_dict = DictBuilder.build_dict(trace_file, sectors_per_block)
 # print(freq_dict)
 # print(freq_dict.values())
+print(len(freq_dict))
 
 # TEST PARTITIONING FROM RATIO
 ratio = 3
 partitions = Partitioning.partitions_from_ratio(freq_dict, ratio)
-# print("Number of partitions:", partitions)
+print("Number of partitions:", partitions)
 
 # TEST PARTITIONING FROM NUMBER OF PARTITIONS
 # partitions = 3
