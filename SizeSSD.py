@@ -45,3 +45,5 @@ def blocks_per_partition(num_erase_blks, num_partitions):
     # test this
     return num_erase_blks/num_partitions
     # round up
+
+# Also compute max number of logical blocks per erase block and number of overprovisioned erase blocks per partition (see notes in MakeSSD)
