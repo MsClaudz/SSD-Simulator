@@ -12,15 +12,15 @@
 
 #### 3. SizeSSD
 **Inputs:** partition assignments dict, percent overprovisioning, erase block size, logical block size
-**Outputs:** number of erase blocks per partition
+**Outputs:** number of erase blocks per partition, max number of logical blocks per erase block, number of overprovisioned erase blocks per partition
 
 #### 4. MakeSSD
 **Inputs:** number of partitions, number of erase blocks per partition, partition assignments dict
-**Outputs:** SSD, max number of logical blocks per erase block, number of overprovisioned erase blocks per partition
+**Outputs:** SSD
 
 #### 5. SimulateIO
-**Inputs:** trace file, partition assignments dict, SSD, max number of logical blocks per erase block, number of overprovisioned erase blocks per partition
-**Outputs:** total writes by user and total garbage collection writes
+**Inputs:** trace file, partition assignments dict, max number of logical blocks per erase block, number of overprovisioned erase blocks per partition, SSD
+**Outputs:** total writes by user, total garbage collection writes
 
 
 
@@ -30,5 +30,4 @@
 * Select "Download all subtraces via Unix shell script"
 * You will receive a file called "download_all_subtraces_of_391.sh"
 * Save the file to your computer
-* Open a terminal window, navigate to the location of the file, then enter:
-* sh download_all_subtraces_of_391.sh
+* Open a terminal window, navigate to the location of the file, then enter: sh download_all_subtraces_of_391.sh
