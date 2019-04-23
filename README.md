@@ -19,7 +19,7 @@
 **Outputs:** SSD
 
 #### 5. SimulateIO
-**Inputs:** trace file, partition assignments dict, SSD, max number of logical blocks per erase block, number of overprovisioned erase blocks per partition
+**Inputs:** trace file, partition assignments dict, max number of logical blocks per erase block, number of overprovisioned erase blocks per partition, SSD
 **Outputs:** total writes by user, total garbage collection writes
 
 
