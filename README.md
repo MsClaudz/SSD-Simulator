@@ -11,7 +11,7 @@
 **Outputs:** number of partitions, partition assignments dict
 
 #### 3. SizeSSD
-**Inputs:** frequency dict, partition assignments dict, percent overprovisioning, erase block size, logical block size
+**Inputs:** partition assignments dict, percent overprovisioning, erase block size, logical block size
 **Outputs:** number of erase blocks per partition
 
 #### 4. MakeSSD
