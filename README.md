@@ -30,5 +30,4 @@
 * Select "Download all subtraces via Unix shell script"
 * You will receive a file called "download_all_subtraces_of_391.sh"
 * Save the file to your computer
-* Open a terminal window, navigate to the location of the file, then enter:
-* sh download_all_subtraces_of_391.sh
+* Open a terminal window, navigate to the location of the file, then enter: sh download_all_subtraces_of_391.sh
