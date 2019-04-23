@@ -40,3 +40,37 @@ def ratio_from_partitions(freq_dict, partitions):
     ratio = round(ratio, 2)
     # return update frequency ratio
     return ratio
+
+
+def define_partitions(freq_dict, ratio, partitions):
+    '''(dict of int:int, int, int) -> dict of int:list of int
+
+    From update frequency ratio and number of partitions, computes partition boundaries. Returns partitions in a dict
+    with keys as numbers and values as min and max update frequencies for each partition.
+
+    e.g.
+    >>>define_partitions({23:2, 24:2, 25:3, 26:5, 27:3, 28:6, 29:3, 30:9}, 2, 3)
+    {1:[ , ], 2:[ , ], 3:[ , ]}
+    '''
+    # Create a dictionary with keys equal to the number of partitions
+
+    # Get max value from freq_dict
+    max_freq = (max(freq_dict.values()))
+
+    # Assign max and min partition values to each key
+        # i.e. assign max to dict[partitions][1], then max/ratio to dict[partitions][0]
+        # then set i = 1
+        # while i < partitions, repeat assignments for dict[partitions - i], increment i by 1
+
+    
+def assign_to_partitions(freq_dict, ratio, partitions):
+    '''
+    Replaces the value corresponding to each logical block in freq_dict with a partition number.
+
+    e.g.
+    >>>assign_to_partitions({77:1, 78:2, 79:3, 80:4, 81:8, 82:7}, 2, 3)
+    {77: , 78: , 79: , 80: , 81: , 82: }
+    '''
+    # For each key in freq_dict, check partitions from greatest to smallest
+    # As you check each partition, if dict value <= partition[1] and dict value >= partition[0], replace value with partition number
+    # If you get to the last partition, you can just assign it

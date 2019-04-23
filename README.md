@@ -1,8 +1,30 @@
 # SSD-Simulator
 
+## Modules:
+
+#### 1. DictBuilder
+**Inputs:** trace file, sectors per block
+**Outputs:** frequency dict
+
+#### 2. Partitioning
+**Inputs:** frequency dict, update frequency ratio
+**Outputs:** number of partitions, partition assignments dict
+
+#### 3. SizeSSD
+**Inputs:** frequency dict, partition assignments dict, percent overprovisioning, erase block size, logical block size
+**Outputs:** number of erase blocks per partition
+
+#### 4. MakeSSD
+**Inputs:** number of partitions, number of erase blocks per partition, partition assignments dict
+**Outputs:** SSD, max number of logical blocks per erase block, number of overprovisioned erase blocks per partition
+
+#### 5. SimulateIO
+**Inputs:** trace file, partition assignments dict, SSD, max number of logical blocks per erase block, number of overprovisioned erase blocks per partition
+**Outputs:** total writes by user and total garbage collection writes
 
 
-#### Retrieving FIU trace files: ####
+
+#### Retrieving FIU trace files:
 
 * Go to http://iotta.snia.org/traces/390
 * Select "Download all subtraces via Unix shell script"

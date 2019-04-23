@@ -1,7 +1,7 @@
 def get_blocks(event, sectors_per_block):
     '''(list of str, int) -> list of int
     
-    Makes a list of all blocks affected by an IO trace event.
+    Makes a list of all logical blocks affected by an IO trace event.
 
     e.g.
     >>>get_blocks(['8,16', '2', '14722', '73.165905398', '0', 'C', 'WS', '12858376', '+', '32', '[0]'], 8)
