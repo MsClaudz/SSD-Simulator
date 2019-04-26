@@ -3,7 +3,7 @@
     # partition_dict
     # SSD
     # main_blocks_per_partition
-    # logical_blocks_per_erase_block
+    # pages_per_erase_block
 
 # Outputs:
     # write_amplification
@@ -16,9 +16,9 @@
         # Go to assigned partition in SSD and check all sublists of partition for block number.
         # If it's there, change it to a negative number. If not, just continue on. 
         # Then check same partition, from beginning, sublist-by-sublist until one sublist is not full 
-            # (A sublist is full if length of sublist >= logical_blocks_per_erase_block)
+            # (A sublist is full if length of sublist >= pages_per_erase_block)
         # If index of empty sublist <= main_blocks_per_partition, write the block number to the sublist 
-            # (do we have to write 8 times if 1 erase block = 8 pages?)
+            # (do we have to write 8 times if 1 erase block = 8 pages? I think so)
         # If index of empty sublist > main_blocks_per_partition, garbage collect -- you have reached the overprovisioned blocks
             # Once garbage collection is complete, have it return GC_writes and add that to total_GC_writes
             # then check sublists again to find the first empty one, and write block number there
