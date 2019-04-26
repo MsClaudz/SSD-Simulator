@@ -59,8 +59,8 @@ def add_to_dict(blocks, freq_dict):
 def build_dict(trace_file, sectors_per_logical_block):
     '''(txt file, int) -> dict of int:int
 
-    Reads data from a trace file, then calls add_to_dict and get_blocks to populate a dictionary 
-    with logical block update frequencies.
+    Reads data from a trace file line-by-line and skips lines that are non-write events or incomplete events.
+    For complete write events, calls get_blocks then add_to_dict to populate a dictionary with logical block update frequencies.
 
     e.g.
     >>>build_dict('blkparseout.txt', 8)
