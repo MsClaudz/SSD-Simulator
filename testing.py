@@ -5,12 +5,12 @@ import SizeSSD
 
 # Choose sample file and set parameters
 trace_file = 'traces\cheetah.cs.fiu.edu-110108-113008.1_sample.blkparse'
-sectors_per_block = 8
+sectors_per_logical_block = 8
 
 print("building dictionary")
 
 # Create dictionary using DictBuilder
-freq_dict = DictBuilder.build_dict(trace_file, sectors_per_block)
+freq_dict = DictBuilder.build_dict(trace_file, sectors_per_logical_block)
 # print(freq_dict.values())
 # print(len(freq_dict))
 
