@@ -7,6 +7,7 @@
 
 # Outputs: 
 # main_blocks_per_partition
+# num_main_erase_blocks
 # num_overprovisioned_erase_blocks
 
 def count_logical_blocks(trace_dict):
