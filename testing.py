@@ -14,10 +14,10 @@ print(len(freq_dict))
 
 # TEST PARTITIONING FROM RATIO
 ratio = 3
-partitions = Partitioning.partitions_from_ratio(freq_dict, ratio)
+partitions = Partitioning.num_partitions_from_ratio(freq_dict, ratio)
 print("Number of partitions:", partitions)
 
 # TEST PARTITIONING FROM NUMBER OF PARTITIONS
 # partitions = 3
-# ratio = Partitioning.ratio_from_partitions(freq_dict, partitions)
+# ratio = Partitioning.ratio_from_num_partitions(freq_dict, partitions)
 # print("Update frequency ratio:", ratio)

@@ -12,8 +12,11 @@ def count_logical_blocks(freq_dict, pct_overprov):
     >>>count_logical_blocks(freq_dict, 28)
     300 000
     '''
-    # write this, remember to round up
-
+    # remember to round up
+    num_blocks = len(freq_dict)
+    num_blocks = num_blocks * ((pct_overprov + 100)/100)
+    num_blocks = round(num_blocks)
+    return num_blocks
 
 def count_erase_blocks(num_logical_blks, erase_blk_size, logical_blk_size):
     '''(int, float, float) -> int
