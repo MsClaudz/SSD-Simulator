@@ -1,51 +1,50 @@
-def count_logical_blocks(freq_dict, pct_overprov):
+# Inputs: 
+# partition assignments dict
+# percent overprovisioning
+# erase block size (i.e. pages per erase block)
+# pages per logical block
+# num_partitions
+
+# Outputs: 
+# main_blocks_per_partition
+# num_overprovisioned_erase_blocks
+
+def count_logical_blocks(trace_dict):
     '''(dict of int:int, int) -> int
 
-    Calculates the number of logical blocks required to accommodate the data from one trace.
-    Adds the number of unique blocks affected by the trace to a percentage of over-provisioning blocks. Rounds up.
+    Returns number of unique logical blocks from freq_dict or partition_dict.
 
-    e.g. 
-    >>>count_logical_blocks({34:1, 35:2, 36:3}, 28)
-    4
-
-    e.g. 
-    >>>count_logical_blocks(freq_dict, 28)
-    300000
+    >>>count_logical_blocks({34:1, 35:2, 36:3})
+    3
     '''
-    num_blocks = len(freq_dict)
-    num_blocks = num_blocks * ((pct_overprov + 100)/100)
-    num_blocks = round(num_blocks)
-    return num_blocks
+    return len(trace_dict)
 
-def count_erase_blocks(num_logical_blocks, erase_block_size, sector_size, sectors_per_logical_block):
-    '''(int, float, float) -> int
+   
+def calculate_num_erase_blocks(num_logical_blocks, pages_per_logical_block, pages_per_erase_block, pct_overprov):
+    '''(int, int, int, int) -> int
 
-    Calculates the number of erase blocks required to accommodate the data stored in a number of logical blocks. Rounds up. 
-    Divides the total size of all logical blocks in KB by size of a physical erase block in KB.
+    Takes a number of logical blocks, the number of flash pages per logical block, the number of flash pages per erase block, 
+    and a desired percentage of overprovisioning, and returns the number of main and overprovisioned erase blocks required 
+    to accommodate the data stored in the number of logical blocks. Returns a tuple with both values rounded to whole numbers.
+    
+    >>>calculate_num_erase_blocks(16, 8, 128, 28)
+    (1, 1)
 
-    e.g.
-    >>>count_erase_blocks(300 000, 4096.0, 4.096)
-    300
-
-    >>>count_erase_blocks((count_logical_blocks(freq_dict, 28)), 4096.0, (sectors_per_block * 0.512))
-    300
+    >>>calculate_num_erase_blocks(300000, 8, 128, 28)
+    (18750, 5250)
     '''
-    # test this
-    return (num_logical_blocks * logical_block_size) / erase_block_size 
-    # round up
+    num_main_erase_blocks = round((num_logical_blocks * pages_per_logical_block)/pages_per_erase_block)
+    num_overprovisioned_erase_blocks = round(num_main_erase_blocks * (pct_overprov/100))
+    return (num_main_erase_blocks, num_overprovisioned_erase_blocks)
 
 
-def blocks_per_partition(num_erase_blocks, num_partitions):
+def main_blocks_per_partition(num_main_erase_blocks, num_partitions):
     '''(int, int) -> int
 
-    Calculates the number of erase blocks to allocate to each SSD partition. Rounds up
+    Returns the number of erase blocks to allocate to each SSD partition.
 
     e.g.
     >>>blocks_per_partition(300, 3)
     100
     '''
-    # test this
-    return num_erase_blocks/num_partitions
-    # round up
-
-# Also compute max number of logical blocks per erase block and number of overprovisioned erase blocks per partition (see notes in MakeSSD)
+    return int(num_main_erase_blocks/num_partitions)
