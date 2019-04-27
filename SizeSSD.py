@@ -28,7 +28,7 @@ def count_erase_blocks(num_logical_blks, erase_blk_size, logical_blk_size):
     >>>count_erase_blocks(300 000, 4096.0, 4.096)
     300
 
-    >>>count_erase_blocks((count_logical_blocks(freq_dict, 28)), 4096.0, (sector_size * 0.512))
+    >>>count_erase_blocks((count_logical_blocks(freq_dict, 28)), 4096.0, (sectors_per_block * 0.512))
     300
     '''
     # test this
