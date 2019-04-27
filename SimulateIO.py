@@ -4,6 +4,7 @@
     # SSD
     # main_blocks_per_partition
     # pages_per_erase_block
+    # also use logical_block_size_in_KB and physical_page_size_in_KB?
 
 # Outputs:
     # write_amplification

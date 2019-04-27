@@ -5,20 +5,16 @@ import SizeSSD
 
 # Choose sample file and set parameters
 trace_file = 'traces\cheetah.cs.fiu.edu-110108-113008.1_sample.blkparse'
-logical_block_size_in_KB = 4.096
-page_size_in_KB = 0.512
-pages_per_erase_block = 128 # i.e. physical block size
+logical_block_size_in_KB = 4.096 # default for ext4
+logical_sector_size_in_KB = 0.512 # default for ext4
+physical_page_size_in_KB = 4.096 # this value can be changed, typically it's between 2 KB and 16 KB
+pages_per_erase_block = 256 # i.e. physical block size. This value can be changed, typically it's between 256 KB and 4 MB
 update_frequency_ratio = 2
 percent_of_overprovisioning = 28
 
-# Calculate pages_per_logical_block
-print("\ncalculating pages per logical block...")
-pages_per_logical_block = int(logical_block_size_in_KB/page_size_in_KB)
-print("pages per logical block:", pages_per_logical_block)
-
 # Create dictionary using DictBuilder
 print("\nbuilding dictionary...")
-freq_dict = DictBuilder.build_dict(trace_file, pages_per_logical_block)
+freq_dict = DictBuilder.build_dict(trace_file, logical_block_size_in_KB, logical_sector_size_in_KB)
 print("dictionary built")
 
 # Get number of partitions from update frequency ratio
@@ -45,7 +41,8 @@ print("partitions assigned to logical block numbers")
 # get required number of erase blocks
 print("\ncalculating required number of main and overprovisioned erase blocks...")
 num_logical_blocks = SizeSSD.count_logical_blocks(partition_dict)
-num_main_erase_blocks, num_overprovisioned_erase_blocks = SizeSSD.calculate_num_erase_blocks(num_logical_blocks, pages_per_logical_block, pages_per_erase_block, percent_of_overprovisioning)
+print(num_logical_blocks)
+num_main_erase_blocks, num_overprovisioned_erase_blocks = SizeSSD.calculate_num_erase_blocks(num_logical_blocks, logical_block_size_in_KB, physical_page_size_in_KB, pages_per_erase_block, percent_of_overprovisioning)
 main_blocks_per_partition = SizeSSD.main_blocks_per_partition(num_main_erase_blocks, num_partitions)
 print("total number of main erase blocks required:", num_main_erase_blocks)
 print("number of main erase blocks required per partition:", main_blocks_per_partition)
