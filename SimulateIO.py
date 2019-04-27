@@ -1,13 +1,35 @@
-# What we need to do: Read through trace again. For each logical block:
-    # Check assigned partition
-    # Go to assigned partition and check all sublists for block number.
-        # If it's there, change it to a negative number.
-    # Then check sublist-by-sublist to find one that is not full (can just check length of sublists to make sure it's under the max)
-    # If all up sublists to overprovisioned lists are full, garbage collect
-        # This involves rewriting positive block numbers from each erase block to a new erase block, and deleting the rest
-        # Need to think here about whether to sort lists so the empty ones are at the end again, or how to experiment with dynamic allocation
-        # Count all garbage collection writes
-    # Write block number to a list with space
-    # Count write
+# Inputs:
+    # trace_file
+    # partition_dict
+    # SSD
+    # main_blocks_per_partition
+    # pages_per_erase_block
 
-# What to return: total writes by user and total writes driving garbage collection
+# Outputs:
+    # write_amplification
+
+# What we need to do: 
+    # initialize total_user_writes = 0
+    # initialize total_GC_writes = 0
+    # Re-read trace_file line-by-line, use get_blocks on each line. Then, for each logical block in list:
+        # Check assigned partition in partition_dict
+        # Go to assigned partition in SSD and check all sublists of partition for block number.
+        # If it's there, change it to a negative number. If not, just continue on. 
+        # Then check same partition, from beginning, sublist-by-sublist until one sublist is not full 
+            # (A sublist is full if length of sublist >= pages_per_erase_block)
+        # If index of empty sublist <= main_blocks_per_partition, write the block number to the sublist 
+            # (do we have to write 8 times if 1 erase block = 8 pages? I think so)
+        # If index of empty sublist > main_blocks_per_partition, garbage collect -- you have reached the overprovisioned blocks
+            # Once garbage collection is complete, have it return GC_writes and add that to total_GC_writes
+            # then check sublists again to find the first empty one, and write block number there
+        # increment total_user_writes += 1
+    # write_amplification = total_user_writes / (total_user_writes + total_GC_writes)
+    # return write_amplification
+
+    # garbage collection
+    # define as a separate function - takes a partition, returns a new partition and returns GC_writes
+        # For each sublist (i.e. erase block) in the partition:
+            # rewrite all positive block numbers to new erase blocks, counting every write, then empty the old blocks
+            # At some point, have to sort so empty lists are at the end of the partition
+
+# How do we statically vs. dynamically allocate erase blocks?

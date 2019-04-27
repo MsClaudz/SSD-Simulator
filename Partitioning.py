@@ -11,10 +11,10 @@ def num_partitions_from_ratio(freq_dict, ratio):
     >>> num_partitions_from_ratio({123:2, 234:2, 345:3, 456:5, 567:3, 678:6, 789:3, 890:9}, 2)
     3
     '''
-    # find max and min values
+    # get max and min values from freq_dict
     max_freq = (max(freq_dict.values()))
     min_freq = (min(freq_dict.values()))
-    # compute number of partitions and round up
+    # compute number of partitions and round up to a whole number
     num_partitions = (math.log(max_freq/min_freq))/(math.log(ratio))
     num_partitions = round(num_partitions + 0.5)
     # return number of partitions
@@ -32,7 +32,7 @@ def ratio_from_num_partitions(freq_dict, num_partitions):
     >>>ratio_from_num_partitions({123:2, 234:2, 345:3, 456:5, 567:3, 678:6, 789:3, 890:9}, 2)
     2.12
     '''
-    # find max and min values
+    # get max and min values from freq_dict
     max_freq = (max(freq_dict.values()))
     min_freq = (min(freq_dict.values()))
     # compute update frequency ratio and round to two decimals

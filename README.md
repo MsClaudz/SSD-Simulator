@@ -11,16 +11,16 @@
 **Outputs:** number of partitions, partition assignments dict
 
 #### 3. SizeSSD
-**Inputs:** partition assignments dict, percent overprovisioning, erase block size, logical block size
-**Outputs:** number of erase blocks per partition, max number of logical blocks per erase block, number of overprovisioned erase blocks per partition
+**Inputs:** partition assignments dict, percent overprovisioning, pages per erase block, pages per logical block, number of partitions
+**Outputs:** number of main erase blocks, number of overprovisioned erase blocks, number of main erase blocks per partition
 
 #### 4. MakeSSD
-**Inputs:** number of partitions, number of erase blocks per partition, partition assignments dict
-**Outputs:** SSD
+**Inputs:** number of partitions, number of main erase blocks per partitions, number of overprovisioned erase blocks, static vs. dynamic allocation
+**Outputs:** SSD 
 
 #### 5. SimulateIO
-**Inputs:** trace file, partition assignments dict, max number of logical blocks per erase block, number of overprovisioned erase blocks per partition, SSD
-**Outputs:** total writes by user, total garbage collection writes
+**Inputs:** trace file, partition assignmnets dict, SSD, number of main erase blocks per partition, pages per erase block
+**Outputs:** write amplification
 
 
 

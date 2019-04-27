@@ -1,9 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="9e09b83b-7e01-474b-8c9a-41202668e265" name="Default Changelist" comment="">
+    <list default="true" id="9e09b83b-7e01-474b-8c9a-41202668e265" name="Default Changelist" comment="Merge branch 'master' of https://github.com/MsClaudz/SSD-Simulator.git&#10;&#10;# Conflicts:&#10;#&#9;SizeSSD.py">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DictBuilder.py" beforeDir="false" afterPath="$PROJECT_DIR$/DictBuilder.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MakeSSD.py" beforeDir="false" afterPath="$PROJECT_DIR$/MakeSSD.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Partitioning.py" beforeDir="false" afterPath="$PROJECT_DIR$/Partitioning.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SimulateIO.py" beforeDir="false" afterPath="$PROJECT_DIR$/SimulateIO.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/SizeSSD.py" beforeDir="false" afterPath="$PROJECT_DIR$/SizeSSD.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/testing.py" beforeDir="false" afterPath="$PROJECT_DIR$/testing.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -36,12 +42,12 @@
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="py" value="620" />
+          <entry key="py" value="627" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="Python" value="620" />
+          <entry key="Python" value="627" />
         </counts>
       </usages-collector>
     </session>
@@ -52,7 +58,7 @@
         <entry file="file://$PROJECT_DIR$/DictBuilder.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="-161">
-              <caret line="58" column="14" selection-start-line="58" selection-start-column="4" selection-end-line="58" selection-end-column="14" />
+              <caret line="58" column="14" selection-start-line="58" selection-start-column="14" selection-end-line="58" selection-end-column="14" />
             </state>
           </provider>
         </entry>
@@ -73,16 +79,16 @@
         <entry file="file://$PROJECT_DIR$/MakeSSD.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="220">
-              <caret line="11" selection-start-line="11" selection-end-line="11" />
+              <caret line="17" selection-start-line="17" selection-end-line="17" />
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/SimulateIO.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="140">
-              <caret line="7" column="37" lean-forward="true" selection-start-line="7" selection-start-column="37" selection-end-line="7" selection-end-column="37" />
+              <caret line="7" column="10" lean-forward="true" selection-start-line="7" selection-start-column="10" selection-end-line="7" selection-end-column="10" />
             </state>
           </provider>
         </entry>
@@ -101,11 +107,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/SizeSSD.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="539">
-              <caret line="30" column="91" selection-start-line="30" selection-start-column="91" selection-end-line="30" selection-end-column="91" />
+            <state relative-caret-position="560">
+              <caret line="28" column="126" lean-forward="true" selection-start-line="28" selection-start-column="126" selection-end-line="28" selection-end-column="126" />
             </state>
           </provider>
         </entry>
@@ -113,8 +119,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/testing.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="400">
-              <caret line="21" column="38" selection-start-line="21" selection-start-column="38" selection-end-line="21" selection-end-column="38" />
+            <state relative-caret-position="620">
+              <caret line="31" column="38" selection-start-line="31" selection-start-column="38" selection-end-line="31" selection-end-column="38" />
             </state>
           </provider>
         </entry>
@@ -145,12 +151,12 @@
         <option value="$PROJECT_DIR$/Partitioning.py" />
         <option value="$PROJECT_DIR$/DictBuilder.py" />
         <option value="$PROJECT_DIR$/testing.py" />
-        <option value="$PROJECT_DIR$/SizeSSD.py" />
         <option value="$PROJECT_DIR$/README.md" />
+        <option value="$PROJECT_DIR$/SizeSSD.py" />
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="7">
+  <component name="ProjectFrameBounds" extendedState="6">
     <option name="x" value="2160" />
     <option name="y" value="-15" />
     <option name="width" value="1210" />
@@ -326,7 +332,7 @@
     </history-entry>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-6" y="-6" width="1549" height="837" extended-state="7" />
+    <frame x="-6" y="-6" width="1549" height="837" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.12273642" />
@@ -366,22 +372,15 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/testing.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="400">
-          <caret line="21" column="38" selection-start-line="21" selection-start-column="38" selection-end-line="21" selection-end-column="38" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/SizeSSD.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="539">
-          <caret line="30" column="91" selection-start-line="30" selection-start-column="91" selection-end-line="30" selection-end-column="91" />
+        <state relative-caret-position="620">
+          <caret line="31" column="38" selection-start-line="31" selection-start-column="38" selection-end-line="31" selection-end-column="38" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/MakeSSD.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="220">
-          <caret line="11" selection-start-line="11" selection-end-line="11" />
+          <caret line="17" selection-start-line="17" selection-end-line="17" />
         </state>
       </provider>
     </entry>
@@ -398,14 +397,21 @@
     <entry file="file://$PROJECT_DIR$/DictBuilder.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-161">
-          <caret line="58" column="14" selection-start-line="58" selection-start-column="4" selection-end-line="58" selection-end-column="14" />
+          <caret line="58" column="14" selection-start-line="58" selection-start-column="14" selection-end-line="58" selection-end-column="14" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/SimulateIO.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="140">
-          <caret line="7" column="37" lean-forward="true" selection-start-line="7" selection-start-column="37" selection-end-line="7" selection-end-column="37" />
+          <caret line="7" column="10" lean-forward="true" selection-start-line="7" selection-start-column="10" selection-end-line="7" selection-end-column="10" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/SizeSSD.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="560">
+          <caret line="28" column="126" lean-forward="true" selection-start-line="28" selection-start-column="126" selection-end-line="28" selection-end-column="126" />
         </state>
       </provider>
     </entry>

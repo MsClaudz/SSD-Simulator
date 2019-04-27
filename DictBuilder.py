@@ -1,4 +1,4 @@
-def get_blocks(event, sectors_per_block):
+def get_blocks(event, pages_per_logical_block):
     '''(list of str, int) -> list of int
     
     Makes a list of all logical blocks affected by an IO trace event.
@@ -21,7 +21,7 @@ def get_blocks(event, sectors_per_block):
     req_size = int(event[4])
 
     # Determine end block, also convert to integer
-    end_block = int(start_block + (req_size / sectors_per_block))
+    end_block = int(start_block + (req_size / pages_per_logical_block))
     # Make list of all affected blocks and return the list
     blocks = list(range(start_block, end_block))
     return(blocks)
@@ -56,11 +56,11 @@ def add_to_dict(blocks, freq_dict):
     return freq_dict
 
 
-def build_dict(trace_file, sectors_per_block):
+def build_dict(trace_file, pages_per_logical_block):
     '''(txt file, int) -> dict of int:int
 
-    Reads data from a trace file, then calls add_to_dict and get_blocks to populate a dictionary 
-    with logical block update frequencies.
+    Reads data from a trace file line-by-line and skips lines that are non-write events or incomplete events.
+    For complete write events, calls get_blocks then add_to_dict to populate a dictionary with logical block update frequencies.
 
     e.g.
     >>>build_dict('blkparseout.txt', 8)
@@ -79,7 +79,7 @@ def build_dict(trace_file, sectors_per_block):
             if event[5][0] != 'W':
                 continue
             else:
-                add_to_dict((get_blocks(event, sectors_per_block)), freq_dict)
+                add_to_dict((get_blocks(event, pages_per_logical_block)), freq_dict)
                 continue
         # But, exclude lines from the file that are not trace events
         except IndexError:
