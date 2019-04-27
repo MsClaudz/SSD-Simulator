@@ -41,7 +41,6 @@ print("partitions assigned to logical block numbers")
 # get required number of erase blocks
 print("\ncalculating required number of main and overprovisioned erase blocks...")
 num_logical_blocks = SizeSSD.count_logical_blocks(partition_dict)
-print(num_logical_blocks)
 num_main_erase_blocks, num_overprovisioned_erase_blocks = SizeSSD.calculate_num_erase_blocks(num_logical_blocks, logical_block_size_in_KB, physical_page_size_in_KB, pages_per_erase_block, percent_of_overprovisioning)
 main_blocks_per_partition = SizeSSD.main_blocks_per_partition(num_main_erase_blocks, num_partitions)
 print("total number of main erase blocks required:", num_main_erase_blocks)
