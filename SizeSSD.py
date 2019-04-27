@@ -1,8 +1,9 @@
 # Inputs: 
-# partition assignments dict
-# percent overprovisioning
-# erase block size (i.e. pages per erase block)
-# pages per logical block
+# partition_dict
+# logical_block_size_in_KB
+# physical_page_size_in_KB
+# pages_per_erase_block
+# percent_of_overprovisioning
 # num_partitions
 
 # Outputs: 
@@ -21,21 +22,24 @@ def count_logical_blocks(trace_dict):
     return len(trace_dict)
 
    
-def calculate_num_erase_blocks(num_logical_blocks, pages_per_logical_block, pages_per_erase_block, pct_overprov):
+def calculate_num_erase_blocks(num_logical_blocks, logical_block_size_in_KB, physical_page_size_in_KB, pages_per_erase_block, percent_of_overprovisioning):
     '''(int, int, int, int) -> int
 
     Takes a number of logical blocks, the number of flash pages per logical block, the number of flash pages per erase block, 
     and a desired percentage of overprovisioning, and returns the number of main and overprovisioned erase blocks required 
     to accommodate the data stored in the number of logical blocks. Returns a tuple with both values rounded to whole numbers.
     
-    >>>calculate_num_erase_blocks(16, 8, 128, 28)
-    (1, 1)
+    >>>calculate_num_erase_blocks(32, 4.096, 0.512, 128, 28)
+    (2, 1)
 
-    >>>calculate_num_erase_blocks(300000, 8, 128, 28)
-    (18750, 5250)
+    >>>calculate_num_erase_blocks(300000, 4.096, 4.096, 128, 28)
+    (2344, 656)
     '''
-    num_main_erase_blocks = round((num_logical_blocks * pages_per_logical_block)/pages_per_erase_block)
-    num_overprovisioned_erase_blocks = round(num_main_erase_blocks * (pct_overprov/100))
+    physical_pages_per_logical_block = logical_block_size_in_KB/physical_page_size_in_KB
+    num_main_erase_blocks = round((num_logical_blocks * physical_pages_per_logical_block)/pages_per_erase_block)
+    if num_main_erase_blocks == 0:
+        num_main_erase_blocks = 1
+    num_overprovisioned_erase_blocks = round(num_main_erase_blocks * (percent_of_overprovisioning/100))
     return (num_main_erase_blocks, num_overprovisioned_erase_blocks)
 
 

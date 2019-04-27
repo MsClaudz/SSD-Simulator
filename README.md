@@ -3,7 +3,7 @@
 ## Modules:
 
 #### 1. DictBuilder
-**Inputs:** trace file, sectors per block
+**Inputs:** trace file, logical block size in KB, logical sector size in KB
 **Outputs:** frequency dict
 
 #### 2. Partitioning
@@ -11,7 +11,7 @@
 **Outputs:** number of partitions, partition assignments dict
 
 #### 3. SizeSSD
-**Inputs:** partition assignments dict, percent overprovisioning, pages per erase block, pages per logical block, number of partitions
+**Inputs:** partition assignments dict, percent overprovisioning, logical block size in KB, physical page size in KB, pages per erase block, number of partitions
 **Outputs:** number of main erase blocks, number of overprovisioned erase blocks, number of main erase blocks per partition
 
 #### 4. MakeSSD

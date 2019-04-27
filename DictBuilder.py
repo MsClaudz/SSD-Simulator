@@ -1,13 +1,21 @@
-def get_blocks(event, pages_per_logical_block):
+# Inputs:
+# trace_file
+# logical_block_size_in_KB
+# logical_sector_size_in_KB
+
+# Outputs:
+# freq_dict
+
+def get_blocks(event, logical_block_size_in_KB, logical_sector_size_in_KB):
     '''(list of str, int) -> list of int
     
     Makes a list of all logical blocks affected by an IO trace event.
 
-    e.g.
-    >>>get_blocks(['8,16', '2', '14722', '73.165905398', '0', 'C', 'WS', '12858376', '+', '32', '[0]'], 8)
+    e.g. (note that examples are based on our trace data, not FUI trace data)
+    >>>get_blocks(['8,16', '2', '14722', '73.165905398', '0', 'C', 'WS', '12858376', '+', '32', '[0]'], 4.096, 0.512)
     [12858376, 12858377, 12858378, 12858379]
 
-    >>>get_blocks(['8,16', '1', '14739', '619.781547871', '0', 'C', 'W', '8697448', '+', '8', '[0]'], 8)
+    >>>get_blocks(['8,16', '1', '14739', '619.781547871', '0', 'C', 'W', '8697448', '+', '8', '[0]'], 4.096, 0.512)
     [8697448]
     '''
     # Get start block and request size from columns 7 and 9 of event, convert them to integer
@@ -21,7 +29,8 @@ def get_blocks(event, pages_per_logical_block):
     req_size = int(event[4])
 
     # Determine end block, also convert to integer
-    end_block = int(start_block + (req_size / pages_per_logical_block))
+    logical_sectors_per_logical_block = logical_block_size_in_KB/logical_sector_size_in_KB
+    end_block = int(start_block + (req_size / logical_sectors_per_logical_block))
     # Make list of all affected blocks and return the list
     blocks = list(range(start_block, end_block))
     return(blocks)
@@ -56,7 +65,7 @@ def add_to_dict(blocks, freq_dict):
     return freq_dict
 
 
-def build_dict(trace_file, pages_per_logical_block):
+def build_dict(trace_file, logical_block_size_in_KB, logical_sector_size_in_KB):
     '''(txt file, int) -> dict of int:int
 
     Reads data from a trace file line-by-line and skips lines that are non-write events or incomplete events.
@@ -79,7 +88,7 @@ def build_dict(trace_file, pages_per_logical_block):
             if event[5][0] != 'W':
                 continue
             else:
-                add_to_dict((get_blocks(event, pages_per_logical_block)), freq_dict)
+                add_to_dict((get_blocks(event, logical_block_size_in_KB, logical_sector_size_in_KB)), freq_dict)
                 continue
         # But, exclude lines from the file that are not trace events
         except IndexError:
