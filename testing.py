@@ -2,13 +2,15 @@
 import DictBuilder
 import Partitioning
 import SizeSSD
+import MakeSSD
+import SimulateIO
 
 # Choose sample file and set parameters
 trace_file = 'traces\cheetah.cs.fiu.edu-110108-113008.1_sample.blkparse'
 logical_block_size_in_KB = 4.096 # default for ext4
 logical_sector_size_in_KB = 0.512 # default for ext4
 physical_page_size_in_KB = 4.096 # this value can be changed, typically it's between 2 KB and 16 KB
-pages_per_erase_block = 256 # i.e. physical block size. This value can be changed, typically it's between 256 KB and 4 MB
+pages_per_erase_block = 256 # i.e. physical block size. This value can be changed, typically it's 128 or 256, i.e. between 256 KB and 4 MB
 update_frequency_ratio = 2
 percent_of_overprovisioning = 28
 
