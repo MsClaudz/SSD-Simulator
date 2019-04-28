@@ -4,7 +4,6 @@
 # logical_sector_size_in_KB
 
 # Outputs:
-# event_blocks
 # freq_dict
 
 def get_blocks(event, logical_block_size_in_KB, logical_sector_size_in_KB):
@@ -37,18 +36,6 @@ def get_blocks(event, logical_block_size_in_KB, logical_sector_size_in_KB):
     return(blocks)
 
 
-def get_blocks_for_eventlist(eventlist, logical_block_size_in_KB, logical_sector_size_in_KB):
-    '''
-
-        Makes a list of lists of all logical blocks affected by a list of IO trace event.
-
-    '''
-    blocks = []
-    for event in eventlist:
-        blocks.append(get_blocks(event, logical_block_size_in_KB, logical_sector_size_in_KB))
-    return blocks
-
-
 def add_to_dict(blocks, freq_dict):
     '''(list of int, dict of int:int) -> dict of int:int
     
@@ -78,12 +65,11 @@ def add_to_dict(blocks, freq_dict):
     return freq_dict
 
 
-def get_event_blocks_from_trace_file(trace_file, logical_block_size_in_KB, logical_sector_size_in_KB):
+def get_events_from_trace_file(trace_file):
     '''
 
     Reads data from a trace file line-by-line and skips lines that are non-write events or incomplete events.
-    Appends complete write events to a list and then gets the affected blocks of each event.
-    Returns affected blocks in the form of a list of lists of ints?
+    Appends complete write events to a list and returns the list.
 
     '''
     write_events = []
@@ -104,25 +90,23 @@ def get_event_blocks_from_trace_file(trace_file, logical_block_size_in_KB, logic
         # But, exclude lines from the file that are not trace events
         except IndexError:
             continue
+    # Return updated dict
+    return write_events
 
-    blocks = get_blocks_for_eventlist(write_events, logical_block_size_in_KB, logical_sector_size_in_KB)
-    return blocks
 
-
-def build_dict(event_blocks):
+def build_dict(write_events, logical_block_size_in_KB, logical_sector_size_in_KB):
     '''(txt file, int) -> dict of int:int
 
     Reads data from a trace file line-by-line and skips lines that are non-write events or incomplete events.
     For complete write events, calls get_blocks then add_to_dict to populate a dictionary with logical block update frequencies.
 
     e.g.
-    >>>build_dict(get_event_blocks_from_trace_file('blkparseout.txt'), 8)
+    >>>build_dict(get_events_from_trace_file('blkparseout.txt'), 8)
     {6810720: 1, 6810721: 3, 6810722: 2, 6810723: 5, 6810724: 8}
     '''
     freq_dict = {}
-
-    for event in event_blocks:
-        add_to_dict(event, freq_dict)
+    for event in write_events:
+        add_to_dict((get_blocks(event, logical_block_size_in_KB, logical_sector_size_in_KB)), freq_dict)
 
     # Return updated dict
     return freq_dict
