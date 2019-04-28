@@ -16,8 +16,7 @@ percent_of_overprovisioning = 28
 
 # Create dictionary using DictBuilder
 print("\nbuilding dictionary...")
-write_events = DictBuilder.get_events_from_trace_file(trace_file)
-freq_dict = DictBuilder.build_dict(write_events, logical_block_size_in_KB, logical_sector_size_in_KB)
+freq_dict = DictBuilder.build_dict(trace_file, logical_block_size_in_KB, logical_sector_size_in_KB)
 print("dictionary built")
 
 # Get number of partitions from update frequency ratio

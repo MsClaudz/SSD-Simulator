@@ -65,19 +65,22 @@ def add_to_dict(blocks, freq_dict):
     return freq_dict
 
 
-def get_events_from_trace_file(trace_file):
-    '''
+def build_dict(trace_file, logical_block_size_in_KB, logical_sector_size_in_KB):
+    '''(txt file, int) -> dict of int:int
 
     Reads data from a trace file line-by-line and skips lines that are non-write events or incomplete events.
-    Appends complete write events to a list and returns the list.
+    For complete write events, calls get_blocks then add_to_dict to populate a dictionary with logical block update frequencies.
 
+    e.g.
+    >>>build_dict('blkparseout.txt', 8)
+    {6810720: 1, 6810721: 3, 6810722: 2, 6810723: 5, 6810724: 8}
     '''
-    write_events = []
+    freq_dict = {}
     trace_data = open(trace_file, 'r')
     # Read events from the trace file and put in a list one-by-one
     for event in trace_data:
         event = event.split()
-        # For each event, check if it's a complete write and if so, add to list of write events
+        # For each event, check if it's a complete write and if so, update dict
         try:
             ## Our traces:
             # if (event[6][0] != 'W') or (event[5] != 'C'):
@@ -85,28 +88,10 @@ def get_events_from_trace_file(trace_file):
             if event[5][0] != 'W':
                 continue
             else:
-                write_events.append(event)
+                add_to_dict((get_blocks(event, logical_block_size_in_KB, logical_sector_size_in_KB)), freq_dict)
                 continue
         # But, exclude lines from the file that are not trace events
         except IndexError:
             continue
-    # Return updated dict
-    return write_events
-
-
-def build_dict(write_events, logical_block_size_in_KB, logical_sector_size_in_KB):
-    '''(txt file, int) -> dict of int:int
-
-    Reads data from a trace file line-by-line and skips lines that are non-write events or incomplete events.
-    For complete write events, calls get_blocks then add_to_dict to populate a dictionary with logical block update frequencies.
-
-    e.g.
-    >>>build_dict(get_events_from_trace_file('blkparseout.txt'), 8)
-    {6810720: 1, 6810721: 3, 6810722: 2, 6810723: 5, 6810724: 8}
-    '''
-    freq_dict = {}
-    for event in write_events:
-        add_to_dict((get_blocks(event, logical_block_size_in_KB, logical_sector_size_in_KB)), freq_dict)
-
     # Return updated dict
     return freq_dict
