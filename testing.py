@@ -7,7 +7,7 @@ import SimulateIO
 
 # Choose sample file and set parameters
 # trace_file = 'traces\cheetah.cs.fiu.edu-110108-113008.1_sample.blkparse'
-trace_file = 'traces\cheetah.cs.fiu.edu-110108-113008.1_sample_mini'
+trace_file = 'traces\cheetah.cs.fiu.edu-110108-113008.1_sample_10000_lines'
 logical_block_size_in_KB = 4.096 # default for ext4
 logical_sector_size_in_KB = 0.512 # default for ext4
 physical_page_size_in_KB = 4.096 # this value can be changed, typically it's between 2 KB and 16 KB
@@ -55,6 +55,5 @@ print("total number of overprovisioned erase blocks required:", num_overprovisio
 print("\nmaking SSD...")
 SSD = MakeSSD.make_SSD(num_partitions, main_blocks_per_partition, num_overprovisioned_erase_blocks, provisioning_is_static)
 print("SSD made")
-print(SSD)
 
 print("\ndone")
