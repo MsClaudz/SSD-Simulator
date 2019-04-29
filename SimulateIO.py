@@ -23,6 +23,21 @@ import DictBuilder
 # Have not yet built in any functionality for static vs. dynamic allocation of erase blocks. Leave that until the end?
 
 
+def free_pages(block_num, partition):
+    '''(int, list of lists of int) -> list of lists of int
+
+    Checks all erase blocks in a partition for block number. If it is found, changes block number to a negative number.
+    Returns the partition.
+
+    e.g.
+    >>> free_pages(12, [[10, 11, 12], [13, 14, 15]])
+    [[10, 11, -12], [13, 14, 15]]
+    '''
+    # finish this
+
+    return partition
+
+
 def garbage_collect(partition, pages_per_erase_block):
     '''(list of lists of int, int) -> (list of lists of int, int)
 
@@ -34,6 +49,7 @@ def garbage_collect(partition, pages_per_erase_block):
     [[15, 12, 14], [13], []]
     '''
     # finish this
+    # should we have the lists filled with zeroes instead of empty space?
 
     GC_writes = 0
     # For each sublist (i.e. erase block) in the partition:
@@ -63,21 +79,10 @@ def locate_space(partition, pages_per_erase_block, main_blocks_per_partition):
             # Otherwise, return indexes of block and empty page
 
 
-def free_pages(block_num, partition):
-    '''(int, list of lists of int) -> None
-
-    Checks all erase blocks in a partition for block number. If it is found, changes block number to a negative number.
-
-    '''
-    # finish this
-
-    return
-
-
 def write_to_partition(blocks, partition_dict, SSD, pages_per_erase_block, main_blocks_per_partition):
     '''(list, dict of int:int, list of list of list, int, int) -> (int, int)
 
-    
+    Writes a list of block numbers to the simulated SSD. 
     Returns number of user writes and number of garbage collection writes that occurred.
 
     '''
