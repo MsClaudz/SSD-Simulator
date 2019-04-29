@@ -2,7 +2,7 @@ import math
 
 # Given update frequency ratio, compute number of partitions
 def num_partitions_from_ratio(freq_dict, ratio):
-    '''(dict of int:int, int) -> int
+    '''(dict of int:int, number) -> int
 
     Given update frequency ratio, calculates the minimum number of partitions required to ensure ratio is not exceeded
     (Update frequency ratio is the ratio between maximum and minimum update frequencies of pages in a partition)
@@ -45,10 +45,10 @@ def ratio_from_num_partitions(freq_dict, num_partitions):
 
 
 def define_partitions(freq_dict, ratio, num_partitions):
-    '''(dict of int:int, int, int) -> list of (int,int)
+    '''(dict of int:int, number, int) -> list of (int,int)
 
     From update frequency ratio and number of partitions, computes partition boundaries. Returns partitions in a list of
-     min and max update frequencies for each partition.
+    min and max update frequencies for each partition.
 
     e.g.
     >>> define_partitions({23:2, 24:2, 25:3, 26:5, 27:3, 28:6, 29:3, 30:9}, 2, 3)
@@ -69,7 +69,8 @@ def define_partitions(freq_dict, ratio, num_partitions):
     return partitions
     
 def assign_to_partitions(freq_dict, ratio, partitions):
-    '''
+    '''(dict of int:int, number, list of (int, int)) -> dict of int:int
+
     Replaces the value corresponding to each logical block in freq_dict with a partition number.
 
     e.g.
