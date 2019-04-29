@@ -25,7 +25,7 @@ def count_logical_blocks(trace_dict):
 def calculate_num_erase_blocks(num_logical_blocks, logical_block_size_in_KB, physical_page_size_in_KB, pages_per_erase_block, percent_of_overprovisioning):
     '''(int, int, int, int) -> (float, float)
 
-    Takes a number of logical blocks, the number of flash pages per logical block, the number of flash pages per erase block, 
+    Takes a number of logical blocks, the size of logical blocks and physical pages, the number of flash pages per erase block, 
     and a desired percentage of overprovisioning, and returns the number of main and overprovisioned erase blocks required 
     to accommodate the data stored in the number of logical blocks. Returns a tuple with both values.
     
@@ -35,7 +35,10 @@ def calculate_num_erase_blocks(num_logical_blocks, logical_block_size_in_KB, phy
     >>>calculate_num_erase_blocks(300000, 4.096, 4.096, 128, 28)
     (2343.75, 656.2500000000001)
     '''
-    physical_pages_per_logical_block = logical_block_size_in_KB/physical_page_size_in_KB
+    # For now, physical_pages_per_logical_block will always round up if it evalutes to a decimal number. 
+    # This means if a physical page is larger than a logical block, that logical block will still be assigned 1 full physical page.
+        # Version that doesn't round up: physical_pages_per_logical_block = logical_block_size_in_KB / physical_page_size_in_KB
+    physical_pages_per_logical_block = int(-(-logical_block_size_in_KB//physical_page_size_in_KB))
     num_main_erase_blocks = (num_logical_blocks * physical_pages_per_logical_block)/pages_per_erase_block
     num_overprovisioned_erase_blocks = num_main_erase_blocks * (percent_of_overprovisioning/100)
     return (num_main_erase_blocks, num_overprovisioned_erase_blocks)
