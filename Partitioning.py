@@ -6,6 +6,7 @@ def num_partitions_from_ratio(freq_dict, ratio):
 
     Given update frequency ratio, calculates the minimum number of partitions required to ensure ratio is not exceeded
     (Update frequency ratio is the ratio between maximum and minimum update frequencies of pages in a partition)
+    Returns the number of partitions, rounded up to the nearest integer.
 
     e.g.
     >>> num_partitions_from_ratio({123:2, 234:2, 345:3, 456:5, 567:3, 678:6, 789:3, 890:9}, 2)
@@ -16,7 +17,8 @@ def num_partitions_from_ratio(freq_dict, ratio):
     min_freq = (min(freq_dict.values()))
     # compute number of partitions and round up to a whole number
     num_partitions = (math.log(max_freq/min_freq))/(math.log(ratio))
-    num_partitions = round(num_partitions + 0.5)
+    # round num_partitions up to nearest whole number
+    num_partitions = int(-(-num_partitions // 1))
     # return number of partitions
     return num_partitions
 
