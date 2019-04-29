@@ -3,7 +3,7 @@ import DictBuilder
 import Partitioning
 import SizeSSD
 import MakeSSD
-import SimulateIO
+# import SimulateIO
 
 # Choose sample file and set parameters
 # trace_file = 'traces\cheetah.cs.fiu.edu-110108-113008.1_sample.blkparse'
