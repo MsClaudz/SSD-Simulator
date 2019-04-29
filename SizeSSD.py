@@ -44,10 +44,10 @@ def calculate_num_erase_blocks(num_logical_blocks, logical_block_size_in_KB, phy
 def main_blocks_per_partition(num_main_erase_blocks, num_partitions):
     '''(float, int) -> int
 
-    Returns the number of erase blocks to allocate to each SSD partition. Rounds to nearest whole number.
+    Returns the number of erase blocks to allocate to each SSD partition. Rounds up to nearest whole number.
 
     e.g.
     >>>blocks_per_partition(300.0, 3)
     100
     '''
-    return round(num_main_erase_blocks/num_partitions)
+    return int(-(-num_main_erase_blocks // num_partitions))
