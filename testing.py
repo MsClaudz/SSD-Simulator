@@ -13,6 +13,7 @@ physical_page_size_in_KB = 4.096 # this value can be changed, typically it's bet
 pages_per_erase_block = 256 # i.e. physical block size. This value can be changed, typically it's 128 or 256, i.e. between 256 KB and 4 MB
 update_frequency_ratio = 2
 percent_of_overprovisioning = 28
+provisioning_is_static = True
 
 # Create dictionary using DictBuilder
 print("\nbuilding dictionary...")
@@ -48,5 +49,10 @@ main_blocks_per_partition = SizeSSD.main_blocks_per_partition(num_main_erase_blo
 print("total number of main erase blocks required:", num_main_erase_blocks)
 print("number of main erase blocks required per partition:", main_blocks_per_partition)
 print("total number of overprovisioned erase blocks required:", num_overprovisioned_erase_blocks)
+
+# make SSD structure
+print("\nmaking SSD...")
+SSD = MakeSSD.make_SSD(num_partitions, main_blocks_per_partition, num_overprovisioned_erase_blocks, provisioning_is_static)
+print("SSD made")
 
 print("\ndone")
