@@ -11,14 +11,14 @@ def get_blocks(event, logical_block_size_in_KB, logical_sector_size_in_KB):
     
     Makes a list of all logical blocks affected by an IO trace event.
 
-    e.g. (note that examples are based on our trace data, not FUI trace data)
+    e.g. (note that examples are based on our trace data, not FIU trace data)
     >>>get_blocks(['8,16', '2', '14722', '73.165905398', '0', 'C', 'WS', '12858376', '+', '32', '[0]'], 4.096, 0.512)
     [12858376, 12858377, 12858378, 12858379]
 
     >>>get_blocks(['8,16', '1', '14739', '619.781547871', '0', 'C', 'W', '8697448', '+', '8', '[0]'], 4.096, 0.512)
     [8697448]
     '''
-    # Get start block and request size from columns 7 and 9 of event, convert them to integer
+    # Get start block and request size from event, convert them to integer
     
     ## Our traces:
     # start_block = int(event[7])
@@ -31,9 +31,35 @@ def get_blocks(event, logical_block_size_in_KB, logical_sector_size_in_KB):
     # Determine end block, also convert to integer
     logical_sectors_per_logical_block = logical_block_size_in_KB/logical_sector_size_in_KB
     end_block = int(start_block + (req_size / logical_sectors_per_logical_block))
+    
     # Make list of all affected blocks and return the list
     blocks = list(range(start_block, end_block))
     return(blocks)
+
+
+def filter_event(event):
+    '''(list of str) -> bool
+    Returns True if trace event is a write event and a complete event
+    e.g.
+    >>>filter_event(['8,16', '2', '14722', '73.165905398', '0', 'C', 'WS', '12858376', '+', '32', '[0]'])
+    True
+    >>>filter_event(['8,16', '2', '10013', '16.774178596', '3929', 'C', 'R', '5149344', '+', '120', '[0]'])
+    False
+    >>>filter_event(['8,16', '1', '14483', '615.865377616', '3997', 'D', 'W', '7240192', '+', '1536', '[kworker/u8:0]'])
+    False
+    '''
+
+    # Our traces
+    # If the event is not some type of write ('W', 'WS', or 'WM'), or not the completed part of the transaction ('C') return False
+    # if (event[6][0] != 'W') or (event[5] != 'C'):
+        # return False
+    
+    # FIU traces
+    # If event is not some type of write ('W', 'WS', or 'WM'), return false
+    if event[5][0] != 'W':
+        return False
+    else:
+        return True
 
 
 def add_to_dict(blocks, freq_dict):
@@ -55,13 +81,16 @@ def add_to_dict(blocks, freq_dict):
     {80: 4, 90: 5, 76: 1, 77: 1, 78: 2, 79: 3}
     '''
     for block in blocks:
-        # If the block does not yet exist in the dictionary, add it and set its value to 1
+    
+    # If the block does not yet exist in the dictionary, add it and set its value to 1
         if block not in freq_dict:
             freq_dict[block] = 1
-        # If block already exists in dictionary, increment its value by 1
+    
+    # If block already exists in dictionary, increment its value by 1
         elif block in freq_dict:
             freq_dict[block] += 1
-        # return updated dictionary
+    
+    # return updated dictionary
     return freq_dict
 
 
@@ -77,20 +106,18 @@ def build_dict(trace_file, logical_block_size_in_KB, logical_sector_size_in_KB):
     '''
     freq_dict = {}
     trace_data = open(trace_file, 'r')
+
     # Read events from the trace file and put in a list one-by-one
     for event in trace_data:
         event = event.split()
-        # For each event, check if it's a complete write and if so, update dict
+    # For each event, use filter_event check if it's a complete write and if so, update dict
         try:
-            ## Our traces:
-            # if (event[6][0] != 'W') or (event[5] != 'C'):
-            ## FIU traces:
-            if event[5][0] != 'W':
+            if filter_event(event) == False:
                 continue
             else:
                 add_to_dict((get_blocks(event, logical_block_size_in_KB, logical_sector_size_in_KB)), freq_dict)
                 continue
-        # But, exclude lines from the file that are not trace events
+    # But, exclude lines from the file that are not trace events
         except IndexError:
             continue
     # Return updated dict
