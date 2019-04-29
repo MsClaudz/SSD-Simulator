@@ -3,7 +3,7 @@ import DictBuilder
 import Partitioning
 import SizeSSD
 import MakeSSD
-# import SimulateIO
+import SimulateIO
 
 # Choose sample file and set parameters
 # trace_file = 'traces\cheetah.cs.fiu.edu-110108-113008.1_sample.blkparse'
@@ -55,5 +55,10 @@ print("total number of overprovisioned erase blocks required:", num_overprovisio
 print("\nmaking SSD...")
 SSD = MakeSSD.make_SSD(num_partitions, main_blocks_per_partition, num_overprovisioned_erase_blocks, provisioning_is_static)
 print("SSD made")
+
+# Run IO to compute write amplification
+print("Simulating SSD writes... this will take a while...")
+write_amplification = SimulateIO.Run_IO(trace_file, logical_block_size_in_KB, logical_sector_size_in_KB, partition_dict, SSD, pages_per_erase_block, main_blocks_per_partition)
+print(write_amplification)
 
 print("\ndone")
