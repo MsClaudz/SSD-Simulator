@@ -36,6 +36,11 @@ class GarbageCollectionRequired(Error):
     that has no free space.'''
     pass
 
+class PartitionCompletelyFull(Error):
+    '''Exception raised when an operation attempts to write to a partition
+    that has no free space, and cannot make space with garbage collection.'''
+    pass
+
 def free_pages(block_num, partition):
     '''(int, list of lists of int) -> list of lists of int
 
@@ -178,7 +183,7 @@ main_blocks_per_partition, is_static):
                 erase_block_index = locate_space(SSD[partition_index], 
                 pages_per_erase_block)
             except GarbageCollectionRequired:
-                print("The SSD drive is full. Cannot complete simulation.")
+                raise PartitionCompletelyFull
             # print('Space now in this erase block:', erase_block_index)
     
     # Write block to empty space
