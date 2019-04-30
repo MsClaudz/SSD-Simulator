@@ -9,30 +9,32 @@
     # physical_page_size_in_KB
     # is_static
 
+    # Is there a way to group the parameters so we don't have so many?
+
 # Outputs:
     # write_amplification
 
+
+# Note: current module is only built for cases where logical block size 
+# equals physical page size.
+
+# If logical_block_size_in_KB > physical_page_size_in_KB, 
+# the module will not deal with it correctly.
+
+# If logical_block_size_in_KB < physical_page_size_in_KB, 
+# the page size is irrelevant. SizeSSD assigns each logical block 1 full page.
+
+
 import DictBuilder
-
-# Note
-# Current module is only built for cases where logical_block_size_in_KB == physical_page_size_in_KB
-    # If logical_block_size_in_KB > physical_page_size_in_KB, the module will not deal with it correctly.
-    # If logical_block_size_in_KB < physical_page_size_in_KB, the page size is irrelevant. SizeSSD assigns each logical block a full page.
-
-
-# Have not yet built in any functionality for static vs. dynamic allocation of erase blocks. Leave that until the end?
-
 
 class Error(Exception):
     '''Base class for exceptions in this module.'''
     pass
 
-
 class GarbageCollectionRequired(Error):
     '''Exception raised when an operation attempts to write to a partition
     that has no free space.'''
     pass
-
 
 def free_pages(block_num, partition):
     '''(int, list of lists of int) -> list of lists of int
