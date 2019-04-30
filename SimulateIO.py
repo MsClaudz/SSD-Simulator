@@ -23,6 +23,17 @@ import DictBuilder
 # Have not yet built in any functionality for static vs. dynamic allocation of erase blocks. Leave that until the end?
 
 
+class Error(Exception):
+    '''Base class for exceptions in this module.'''
+    pass
+
+
+class GarbageCollectionRequired(Error):
+    '''Exception raised when an operation attempts to write to a partition
+    that has no free space.'''
+    pass
+
+
 def free_pages(block_num, partition):
     '''(int, list of lists of int) -> list of lists of int
 
@@ -80,8 +91,9 @@ def garbage_collect(partition, pages_per_erase_block):
                     GC_writes += 1
 
     # Create a new_partition variable
-    # Split temp into erase block-sized chunks and store them in new_partition
     new_partition = []
+
+    # Split temp into erase block-sized chunks and store them in new_partition
     for i in range(0, len(temp), pages_per_erase_block):
         new_partition.append(temp[i:i+pages_per_erase_block])
 
@@ -94,31 +106,53 @@ def garbage_collect(partition, pages_per_erase_block):
     return (new_partition, GC_writes)
 
 
-def locate_space(partition, pages_per_erase_block, main_blocks_per_partition):
-    '''(list of lists of int, int, int) -> (int, int)
+def locate_space(partition, pages_per_erase_block, main_blocks_per_partition, is_static):
+    '''(list of lists of int, int, int, bool) -> (int, int)
 
     Given a partition, searches for empty space. If it's found, returns the 
     index numbers of the erase block and the page where data can be written. 
     Returns a tuple of (erase_block_index, page_index). If there is no space, 
     raises GarbageCollectionRequired exception.
 
+    e.g.
+    >>> locate_space([[22, 24, 25], [13, 15, 12], [14], []], 3, 3, True)
+    (2, 1)
+
+    >>> locate_space([[22, 24, 25], [13, 15, 12], [14, 17, 18], []], 3, 3, True)
+    __main__.GarbageCollectionRequired
+
+    >>> locate_space([[22, 24, 25], [13, 15, 12], []], 3, 3, False)
+    (2, 0)
+
+    >>> locate_space([[22, 24, 25], [13, 15, 12], [14, 17, 18]], 3, 3, False)
+    __main__.GarbageCollectionRequired
     '''
-    # finish this
+    if is_static:
+        print('is static')
+    # Check each erase block to see that it's not an overprovisioned block
+        for erase_block_index in range(len(partition)):
+            if erase_block_index >= main_blocks_per_partition:
+                print('is overprovisioned')
+    # If you've reached an overprovisioned block, require garbage collection
+                raise GarbageCollectionRequired
+    # If not overprovisioned, check if block has an empty page
+            elif len(partition[erase_block_index]) < pages_per_erase_block:
+                print('is main')
+    # If it does, return indexes of block and empty page
+                return (erase_block_index, len(partition[erase_block_index]))
 
-    # if there is space:
-        # return the space in a tuple, like this: (erase_block_index, page_index)
-    else:
-        raise Exception('Garbage collection required')
-
-    # Notes
-    # Check partition from beginning, sublist-by-sublist, until one sublist is not full. A sublist is full if length of sublist >= pages_per_erase_block
-        # When you find a sublist that is not full:
-            # If index of empty sublist > main_blocks_per_partition, garbage collect -- you have reached the overprovisioned blocks
-            # Otherwise, return indexes of block and empty page
+    if not is_static:
+        print('is not static')
+    # Check each erase block for empty pages and if found, return indexes
+        for erase_block_index in range(len(partition)):
+            if len(partition[erase_block_index]) < pages_per_erase_block:
+                return (erase_block_index, len(partition[erase_block_index]))
+    # Otherwise, if no empty space, require garbage collection
+        raise GarbageCollectionRequired
 
 
-def write_to_partition(blocks, partition_dict, SSD, pages_per_erase_block, main_blocks_per_partition):
-    '''(list, dict of int:int, list of list of list, int, int) -> (int, int)
+def write_to_partition(blocks, partition_dict, SSD, pages_per_erase_block, main_blocks_per_partition, is_static):
+    '''(list, dict of int:int, list of list of list, int, int, bool) -> (int, int)
 
     Writes a list of block numbers to the simulated SSD. 
     Returns number of user writes and number of garbage collection writes that occurred.
@@ -127,7 +161,7 @@ def write_to_partition(blocks, partition_dict, SSD, pages_per_erase_block, main_
     user_writes = 0
     GC_writes = 0
 
-    # For one logical block at a time, get number of assigned partition from partition_dict
+    # For one logical block at a time, get number of assigned partitions from partition_dict
     for block_num in blocks:
         partition_num = partition_dict[block]
 
@@ -136,11 +170,11 @@ def write_to_partition(blocks, partition_dict, SSD, pages_per_erase_block, main_
 
     # Attempt to locate space in the partition. If there is no space, garbage collect and increment writes, then locate space again
         try:
-            erase_block_index, page_index = locate_space(SSD[partition_num], pages_per_erase_block, main_blocks_per_partition)
-        except: # try to make this specific to the 'Garbage collection required' exception, or do this part without try and except
+            erase_block_index, page_index = locate_space(SSD[partition_num], pages_per_erase_block, main_blocks_per_partition, is_static)
+        except GarbageCollectionRequired:
             SSD[partition_num], new_writes = collect_garbage(SSD[partition_num], pages_per_erase_block)
             GC_writes += new_writes
-            erase_block_index, page_index = locate_space(SSD[partition_num], pages_per_erase_block, main_blocks_per_partition)
+            erase_block_index, page_index = locate_space(SSD[partition_num], pages_per_erase_block, main_blocks_per_partition, is_static)
     
     # Write block to empty space
         SSD[partition_num][erase_block_index][page_index] = block_num
@@ -149,8 +183,8 @@ def write_to_partition(blocks, partition_dict, SSD, pages_per_erase_block, main_
     return (user_writes, GC_writes)
 
 
-def Run_IO(trace_file, logical_block_size_in_KB, logical_sector_size_in_KB, partition_dict, SSD, pages_per_erase_block, main_blocks_per_partition):
-    '''(file, int, int, dict of int:int, list of lists, int, int) -> float
+def Run_IO(trace_file, logical_block_size_in_KB, logical_sector_size_in_KB, partition_dict, SSD, pages_per_erase_block, main_blocks_per_partition, is_static):
+    '''(file, int, int, dict of int:int, list of lists, int, int, bool) -> float
 
     Reads events from a file of trace data, runs them through the simulated SSD, and tracks writes to compute write amplification.
 
