@@ -46,32 +46,61 @@ def free_pages(block_num, partition):
 def garbage_collect(partition, pages_per_erase_block):
     '''(list of lists of int, int) -> (list of lists of int, int)
 
-    Takes a partition. Performs garbage collection on partition and returns the new partition, along with the number of writes 
-    that occurred to complete the garbage collection. Returns a tuple of (partition, GC_writes)
+    Takes a partition. Writes all valid data from erase blocks into a new
+    partition, counting the number of writes the occurred to move data from
+    erase blocks containing invalid pages. Splits the new partition into correct
+    number of erase blocks and returns a tuple of (new_partition, GC_writes)
 
     e.g.
-    >>>garbage_collect([[-12, 13, -14], [15, 12, 14], [13]], 3)
-    [[15, 12, 14], [13], []]
+    >>>garbage_collect([[-12, 15, -14], [-13, 12, 14], [22, 24, 25], [13]], 3)
+    ([[22, 24, 25], [13, 15, 12], [14], []], 3)
     '''
-    new_partition = []
-    for erase_block in partition:
-
-
-    # finish this
-    # should we have the lists filled with zeroes instead of empty space?
-
     GC_writes = 0
-    # For each sublist (i.e. erase block) in the partition:
-        # Rewrite all positive block numbers to new erase blocks, counting every write, then empty the old blocks
-        # Sort so empty lists are at the end of the partition
-    return (partition, GC_writes)
+
+    # Create temporary list
+    temp = []
+
+    # Write full blocks with no invalid pages to temp, do not increment GC_writes
+    for erase_block in partition:
+        if all(i > 0 for i in erase_block) and len(erase_block) == pages_per_erase_block:
+            for page in erase_block:
+                temp.append(page)
+    
+    # Write partial blocks with no invalid pages to temp, do not increment GC_writes
+        if all(i > 0 for i in erase_block) and len(erase_block) < pages_per_erase_block:
+            for page in erase_block:
+                temp.append(page)
+
+    # Write blocks with one or more invalid pages to temp, increment GC_writes
+    for erase_block in partition:
+        if not all(i > 0 for i in erase_block):
+            for page in erase_block:
+                if page > 0:
+                    temp.append(page)
+                    GC_writes += 1
+
+    # Create a new_partition variable
+    # Split temp into erase block-sized chunks and store them in new_partition
+    new_partition = []
+    for i in range(0, len(temp), pages_per_erase_block):
+        new_partition.append(temp[i:i+pages_per_erase_block])
+
+    # Add empty erase blocks to new partition to bring it up to original size
+    i = len(partition)
+    while len(new_partition) < i:
+        new_partition.append([])
+
+    # return (new_partition, GC_writes)
+    return (new_partition, GC_writes)
 
 
 def locate_space(partition, pages_per_erase_block, main_blocks_per_partition):
     '''(list of lists of int, int, int) -> (int, int)
 
-    Given a partition, searches for empty space. If it's found, returns the index numbers of the erase block and the page where data 
-    can be written. Returns a tuple of (erase_block_index, page_index). If there is no space, raises GarbageCollectionRequired exception.
+    Given a partition, searches for empty space. If it's found, returns the 
+    index numbers of the erase block and the page where data can be written. 
+    Returns a tuple of (erase_block_index, page_index). If there is no space, 
+    raises GarbageCollectionRequired exception.
 
     '''
     # finish this
