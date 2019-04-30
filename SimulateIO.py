@@ -113,46 +113,27 @@ def garbage_collect(partition, pages_per_erase_block):
     return (new_partition, GC_writes)
 
 
-def locate_space(partition, pages_per_erase_block, main_blocks_per_partition, 
-is_static):
-    '''(list of lists of int, int, int, bool) -> (int)
+def locate_space(partition, pages_per_erase_block):
+    '''(list of lists of int, int) -> (int)
 
     Given a partition, searches for empty space. If it's found, returns the 
     index numbers of the erase block where data can be appended. If there is
     no space, raises GarbageCollectionRequired exception.
 
     e.g.
-    >>> locate_space([[22, 24, 25], [13, 15, 12], [14], []], 3, 3, True)
+    >>> locate_space([[22, 24, 25], [13, 15, 12], [14], []], 3)
     2
 
-    >>> locate_space([[22, 24, 25], [13, 15, 12], [14, 17, 18], []], 3, 3, True)
-    __main__.GarbageCollectionRequired
-
-    >>> locate_space([[22, 24, 25], [13, 15, 12], []], 3, 3, False)
-    2
-
-    >>> locate_space([[22, 24, 25], [13, 15, 12], [14, 17, 18]], 3, 3, False)
+    >>> locate_space([[22, 24, 25], [13, 15, 12], [14, 17, 18], [19, 20, 21]], 3)
     __main__.GarbageCollectionRequired
     '''
-    if is_static:
-    # Check each erase block to see that it's not an overprovisioned block
-        for erase_block_index in range(len(partition)):
-            if erase_block_index >= main_blocks_per_partition:
-    # If you've reached an overprovisioned block, require garbage collection
-                raise GarbageCollectionRequired
-    # If not overprovisioned, check if block has an empty page
-            elif len(partition[erase_block_index]) < pages_per_erase_block:
-    # If it does, return indexes of block and empty page
-                return erase_block_index
-
-    if not is_static:
-    # Check each erase block for empty pages and if found, return indexes
-        for erase_block_index in range(len(partition)):
-            if len(partition[erase_block_index]) < pages_per_erase_block:
+    # Check each erase block for empty pages and if found, return block index
+    for erase_block_index in range(len(partition)):
+        if len(partition[erase_block_index]) < pages_per_erase_block:
                 return erase_block_index
     # Otherwise, if no empty space, require garbage collection
-        raise GarbageCollectionRequired
-
+    raise GarbageCollectionRequired
+    
 
 def write_to_partition(blocks, partition_dict, SSD, pages_per_erase_block, 
 main_blocks_per_partition, is_static):
@@ -179,7 +160,7 @@ main_blocks_per_partition, is_static):
     # If there is no space, garbage collect, then locate space again
         try:
             erase_block_index = locate_space(SSD[partition_index], 
-            pages_per_erase_block, main_blocks_per_partition, is_static)
+            pages_per_erase_block)
             # print('Space in this erase block:', erase_block_index)
         except GarbageCollectionRequired:
             # print('Garbage collection required')
@@ -191,14 +172,19 @@ main_blocks_per_partition, is_static):
             SSD[partition_index], new_writes = garbage_collect(
                 SSD[partition_index], pages_per_erase_block)
             # print('SSD after garbage collection:', SSD)
+            # print('garbage collection performed')
             GC_writes += new_writes
-            erase_block_index = locate_space(SSD[partition_index], 
-            pages_per_erase_block, main_blocks_per_partition, is_static)
+            try:
+                erase_block_index = locate_space(SSD[partition_index], 
+                pages_per_erase_block)
+            except GarbageCollectionRequired:
+                print("The SSD drive is full. Cannot complete simulation.")
             # print('Space now in this erase block:', erase_block_index)
     
     # Write block to empty space
         SSD[partition_index][erase_block_index].append(block)
         # print('SSD with block written:', SSD)
+        # print('block written')
         user_writes += 1
 
     return (user_writes, GC_writes)
@@ -233,6 +219,7 @@ is_static):
             SSD, pages_per_erase_block, main_blocks_per_partition, is_static)
             total_user_writes += user_writes
             total_GC_writes += GC_writes
+            print((total_user_writes + total_GC_writes)/total_user_writes)
             continue
         
     # Close file, then compute and return write amplification
@@ -259,15 +246,15 @@ is_static):
 
 # if is_static == True:
 #     SSD = [
-#     [[5, 6, -7], [7, 8, 9], [], [], [], []],
-#     [[-12, 13, -14], [-15, 12, 14], [16, 17, 18], [], [], []]
+#     [[5, 6, -7], [7, 8, 9], [], []],
+#     [[-12, 13, -14], [-15, 12, 14], [16, 17, 18], []]
 #     ]
 
 # if is_static == False:
 #     SSD = [
 #     [[5, 6, -7], [7, 8, 9], [], []],
 #     [[-12, 13, -14], [-15, 12, 14], [16, 17, 18], []],
-#     [[], [], [], []] 
+#     [[], []] 
 #     ]
 
 # print(write_to_partition(blocks, partition_dict, SSD, pages_per_erase_block, 
