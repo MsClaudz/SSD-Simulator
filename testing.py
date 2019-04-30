@@ -14,7 +14,7 @@ physical_page_size_in_KB = 4.096 # this value can be changed, typically it's bet
 pages_per_erase_block = 256 # i.e. physical block size. This value can be changed, typically it's 128 or 256, i.e. between 256 KB and 4 MB
 update_frequency_ratio = 4
 percent_of_overprovisioning = 28
-provisioning_is_static = True
+provisioning_is_static = False
 
 # Create dictionary using DictBuilder
 print("\nbuilding dictionary...")
@@ -55,10 +55,11 @@ print("total number of overprovisioned erase blocks required:", num_overprovisio
 print("\nmaking SSD...")
 SSD = MakeSSD.make_SSD(num_partitions, main_blocks_per_partition, num_overprovisioned_erase_blocks, provisioning_is_static)
 print("SSD made")
+print()
 
 # Run IO to compute write amplification
 print("Simulating SSD writes... this will take a while...")
-write_amplification = SimulateIO.Run_IO(trace_file, logical_block_size_in_KB, logical_sector_size_in_KB, partition_dict, SSD, pages_per_erase_block, main_blocks_per_partition)
-print(write_amplification)
+write_amplification = SimulateIO.Run_IO(trace_file, logical_block_size_in_KB, logical_sector_size_in_KB, partition_dict, SSD, pages_per_erase_block, main_blocks_per_partition, provisioning_is_static)
+print('write_amplification:', write_amplification)
 
 print("\ndone")
