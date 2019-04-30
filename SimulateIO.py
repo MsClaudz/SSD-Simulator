@@ -26,15 +26,20 @@ import DictBuilder
 def free_pages(block_num, partition):
     '''(int, list of lists of int) -> list of lists of int
 
-    Checks all erase blocks in a partition for block number. If it is found, changes block number to a negative number.
-    Returns the partition.
+    Checks all erase blocks in a partition for block number. If it is found, 
+    changes block number to a negative number. Returns the partition.
 
     e.g.
     >>> free_pages(12, [[10, 11, 12], [13, 14, 15]])
     [[10, 11, -12], [13, 14, 15]]
     '''
-    # finish this
-
+    for erase_block in partition:
+        i = 0
+        while i < len(erase_block):
+            if erase_block[i] == block_num:
+                erase_block[i] = -(block_num)
+                return partition
+            i += 1
     return partition
 
 
@@ -48,6 +53,10 @@ def garbage_collect(partition, pages_per_erase_block):
     >>>garbage_collect([[-12, 13, -14], [15, 12, 14], [13]], 3)
     [[15, 12, 14], [13], []]
     '''
+    new_partition = []
+    for erase_block in partition:
+
+
     # finish this
     # should we have the lists filled with zeroes instead of empty space?
 
