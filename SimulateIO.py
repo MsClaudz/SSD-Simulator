@@ -140,4 +140,4 @@ def Run_IO(trace_file, logical_block_size_in_KB, logical_sector_size_in_KB, part
     # Close file, compute write amplification, and return write amplification
     trace_data.close()
     write_amplification = (total_user_writes + total_GC_writes)/total_user_writes
-    return write_amplification
+    return write_amplification 
