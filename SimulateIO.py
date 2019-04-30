@@ -61,7 +61,7 @@ def garbage_collect(partition, pages_per_erase_block):
 
     Takes a partition. Writes all valid data from erase blocks into a new
     partition, counting the number of writes the occurred to move data from
-    erase blocks containing invalid pages. Splits the new partition into correct
+    erase blocks containing invalid pages. Splits new partition into correct
     number of erase blocks and returns a tuple of (new_partition, GC_writes)
 
     e.g.
@@ -73,18 +73,23 @@ def garbage_collect(partition, pages_per_erase_block):
     # Create temporary list
     temp = []
 
-    # Write full blocks with no invalid pages to temp, do not increment GC_writes
+    # Write full blocks with no invalid pages to temp
+    # Do not increment GC_writes
     for erase_block in partition:
-        if all(i > 0 for i in erase_block) and len(erase_block) == pages_per_erase_block:
+        if all(i > 0 for i in erase_block) and 
+        len(erase_block) == pages_per_erase_block:
             for page in erase_block:
                 temp.append(page)
     
-    # Write partial blocks with no invalid pages to temp, do not increment GC_writes
-        if all(i > 0 for i in erase_block) and len(erase_block) < pages_per_erase_block:
+    # Write partial blocks with no invalid pages to temp
+    # Do not increment GC_writes
+        if all(i > 0 for i in erase_block) and 
+        len(erase_block) < pages_per_erase_block:
             for page in erase_block:
                 temp.append(page)
 
-    # Write blocks with one or more invalid pages to temp, increment GC_writes
+    # Write blocks with one or more invalid pages to temp
+    # Increment GC_writes
     for erase_block in partition:
         if not all(i > 0 for i in erase_block):
             for page in erase_block:
@@ -108,7 +113,8 @@ def garbage_collect(partition, pages_per_erase_block):
     return (new_partition, GC_writes)
 
 
-def locate_space(partition, pages_per_erase_block, main_blocks_per_partition, is_static):
+def locate_space(partition, pages_per_erase_block, main_blocks_per_partition, 
+is_static):
     '''(list of lists of int, int, int, bool) -> (int, int)
 
     Given a partition, searches for empty space. If it's found, returns the 
@@ -130,21 +136,17 @@ def locate_space(partition, pages_per_erase_block, main_blocks_per_partition, is
     __main__.GarbageCollectionRequired
     '''
     if is_static:
-        print('is static')
     # Check each erase block to see that it's not an overprovisioned block
         for erase_block_index in range(len(partition)):
             if erase_block_index >= main_blocks_per_partition:
-                print('is overprovisioned')
     # If you've reached an overprovisioned block, require garbage collection
                 raise GarbageCollectionRequired
     # If not overprovisioned, check if block has an empty page
             elif len(partition[erase_block_index]) < pages_per_erase_block:
-                print('is main')
     # If it does, return indexes of block and empty page
                 return (erase_block_index, len(partition[erase_block_index]))
 
     if not is_static:
-        print('is not static')
     # Check each erase block for empty pages and if found, return indexes
         for erase_block_index in range(len(partition)):
             if len(partition[erase_block_index]) < pages_per_erase_block:
@@ -153,17 +155,20 @@ def locate_space(partition, pages_per_erase_block, main_blocks_per_partition, is
         raise GarbageCollectionRequired
 
 
-def write_to_partition(blocks, partition_dict, SSD, pages_per_erase_block, main_blocks_per_partition, is_static):
-    '''(list, dict of int:int, list of list of list, int, int, bool) -> (int, int)
+def write_to_partition(blocks, partition_dict, SSD, pages_per_erase_block, 
+main_blocks_per_partition, is_static):
+    '''(list, dict of int:int, list of list of list, int, int, bool) -> 
+    (int, int)
 
-    Writes a list of block numbers to the simulated SSD. 
-    Returns number of user writes and number of garbage collection writes that occurred.
+    Writes a list of block numbers to the simulated SSD. Returns number of user 
+    writes and number of garbage collection writes that 
+    occurred.
 
     '''
     user_writes = 0
     GC_writes = 0
 
-    # For one logical block at a time, get number of assigned partitions from partition_dict
+    # For one logical block at a time, get assigned partition from partition_dict
     for block_num in blocks:
         partition_num = partition_dict[block]
 
@@ -185,12 +190,14 @@ def write_to_partition(blocks, partition_dict, SSD, pages_per_erase_block, main_
     return (user_writes, GC_writes)
 
 
-def Run_IO(trace_file, logical_block_size_in_KB, logical_sector_size_in_KB, partition_dict, SSD, pages_per_erase_block, main_blocks_per_partition, is_static):
-    '''(file, int, int, dict of int:int, list of lists, int, int, bool) -> float
+def Run_IO(trace_file, logical_block_size_in_KB, logical_sector_size_in_KB, 
+partition_dict, SSD, pages_per_erase_block, main_blocks_per_partition, 
+is_static):
+    '''(file, int, int, dict of int:int, list of lists, int, int, bool) -> 
+    float
 
-    Reads events from a file of trace data, runs them through the simulated SSD, and tracks writes to compute write amplification.
-
-
+    Reads events from a file of trace data, runs them through simulated SSD, 
+    and tracks writes. Then computes and returns write amplification.
     '''
     trace_data = open(trace_file, 'r')
     total_user_writes = 0
@@ -200,18 +207,20 @@ def Run_IO(trace_file, logical_block_size_in_KB, logical_sector_size_in_KB, part
     for event in trace_data:
         event = event.split()
     
-    # For each event, use filter_event to check if it's a valid, complete write event and if so, get blocks
-    # Then write blocks to partition and increment user_writes and GC_writes variables with return values
+    # For each event, use filter_event to check if it's a valid write event 
         if DictBuilder.filter_event(event) == False:
             continue
+
+    # If so, get blocks, then write blocks to partition
         else:
-            blocks = DictBuilder.get_blocks(event, logical_block_size_in_KB, logical_sector_size_in_KB)
-            user_writes, GC_writes = write_to_partition(blocks, partition_dict, SSD, pages_per_erase_block, main_blocks_per_partition) # ADD OTHER PARAMETERS
+            blocks = DictBuilder.get_blocks(event, logical_block_size_in_KB, 
+            logical_sector_size_in_KB)
+            user_writes, GC_writes = write_to_partition(blocks, partition_dict, 
+            SSD, pages_per_erase_block, main_blocks_per_partition)
             total_user_writes += user_writes
             total_GC_writes += GC_writes
             continue
         
-    # Close file, compute write amplification, and return write amplification
+    # Close file, compute write amplification, and return it
     trace_data.close()
-    write_amplification = (total_user_writes + total_GC_writes)/total_user_writes
-    return write_amplification 
+    return (total_user_writes + total_GC_writes)/total_user_writes
