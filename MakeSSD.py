@@ -7,22 +7,27 @@
 # Outputs:
     # SSD
 
-# What we need to do: 
-    # Create lists of lists to simulate an SSD structure
-        # create SSD using num_partitions and main_blocks_per_partition
-            # e.g. If 6 partitions and 40 erase blocks per partition, create 6 lists of 40 lists each
-        # then add overprovisioned erase blocks
-            # if static allocation, calculate num_overprovisioned_erase_blocks per partition and add to each partition of SSD
-                # e.g. If 6 partitions and 12 overprovisioned erase blocks, add 2 overprovisioned erase blocks to each partition
-            # if dynamic allocation... I guess create an extra partition with all the overprovisioned erase blocks in it?
-
 def make_SSD(num_partitions, main_blocks_per_partition, num_overprovisioned_erase_blocks, is_static):
+    '''(int, int, float, bool) -> list of lists of lists
+
+    Creates nested lists to simulate the structure of an SSD. Takes the number of partitions, the number of main erase blocks per partition, 
+    the total number of overprovisioned erase blocks, and a bool indicating whether overprovisioned erase blocks should be allocated statically.
+    If static provisioning, divides overprovisioned blocks by partitions, rounds up to integer, and adds that number of lists to each partition. 
+    If dynamic, rounds number of overprovisioned erase blocks up to nearest integer and stores all overprovisioned blocks in separate list.
+
+    e.g.
+    >>>make_SSD(3, 4, 3.0, True)
+    [[[], [], [], [], []], [[], [], [], [], []], [[], [], [], [], []]]
+
+    >>>make_SSD(3, 4, 3.0, False)
+    [[[], [], [], []], [[], [], [], []], [[], [], [], []], [[], [], []]
+    '''
     SSD = []
 
     # if it's static allocation, we add eraseblocks into the partitions
     blocks_per_partition = main_blocks_per_partition
     if is_static:
-        blocks_per_partition += num_overprovisioned_erase_blocks / num_partitions
+        blocks_per_partition += int(-(-num_overprovisioned_erase_blocks // num_partitions))
 
     i = 0
     while i < num_partitions:
@@ -36,6 +41,7 @@ def make_SSD(num_partitions, main_blocks_per_partition, num_overprovisioned_eras
 
     # if it's dynamic allocation, we put the overprovisioned blocks in an extra partition at the end
     if not is_static:
+        num_overprovisioned_erase_blocks = int(-(-num_overprovisioned_erase_blocks // 1)) # rounds up to nearest int
         j = 0
         op_partition = []
         while j < num_overprovisioned_erase_blocks:
