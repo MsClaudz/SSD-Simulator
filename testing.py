@@ -16,8 +16,8 @@ logical_sector_size_in_KB = 0.512 # default for ext4
 physical_page_size_in_KB = 4.096 # this value can be changed, typically it's between 2 KB and 16 KB
 pages_per_erase_block = 256 # i.e. physical block size. This value can be changed, typically it's 128 or 256, i.e. between 256 KB and 4 MB
 update_frequency_ratio = 2
-num_partitions = 2
-UFR_or_NP = 'UFR'
+num_partitions = 9
+UFR_or_NP = 'NP'
 percent_of_overprovisioning = 28
 provisioning_is_static = True
 
@@ -43,14 +43,15 @@ if UFR_or_NP == 'NP':
     print("Update frequency ratio:", ratio)
 
 # define partition boundaries
-print("\ngetting partition boundaries...")
-partitions = Partitioning.define_partitions(freq_dict, update_frequency_ratio, num_partitions)
-print("partition boundaries:", partitions)
+# print("\ngetting partition boundaries...")
+# partitions = Partitioning.define_partitions(freq_dict, update_frequency_ratio, num_partitions)
+# print("partition boundaries:", partitions)
 
 # assign blocks to partitions
 print("\nassigning blocks to partitions...")
 # partition_dict = Partitioning.assign_to_partitions(freq_dict, update_frequency_ratio, partitions)
-partition_dict = Partitioning.split_into_partitions(freq_dict, num_partitions)
+partition_dict, partition_boundaries = Partitioning.split_into_partitions(freq_dict, num_partitions)
+print("partition boundaries:", partition_boundaries)
 print("partitions assigned to logical block numbers")
 
 # get required number of erase blocks
