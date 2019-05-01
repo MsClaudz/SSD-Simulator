@@ -224,7 +224,7 @@ is_static):
             SSD, pages_per_erase_block, main_blocks_per_partition, is_static)
             total_user_writes += user_writes
             total_GC_writes += GC_writes
-            print((total_user_writes + total_GC_writes)/total_user_writes)
+            print("Total writes:", total_user_writes, "     ", "Total GC writes:", total_GC_writes)
             continue
         
     # Close file, then compute and return write amplification
