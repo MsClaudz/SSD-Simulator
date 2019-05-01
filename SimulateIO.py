@@ -207,7 +207,10 @@ is_static):
     total_GC_writes = 0
     total_overwrites = 0
     WA_history = []
-    
+
+    stable = 0
+    WA_check = 0
+
     # Read events from the trace file and put in a list one-by-one
     for event in trace_data:
         event = event.split()
@@ -228,7 +231,19 @@ is_static):
             current_WA = (total_user_writes + total_GC_writes)/total_user_writes
             WA_history.append(current_WA)
             if (total_user_writes % 10000 == 0):
-                print("Total user writes:", total_user_writes, "   Total updates:", total_overwrites, "   Total GC writes:", total_GC_writes, "   Current WA:", round(current_WA, 2))
+                print("Total user writes:", total_user_writes, "   Total updates:", total_overwrites, "   Total GC writes:", total_GC_writes, "   Current WA:", round(current_WA, 2), "    Streak:", stable)
+                if WA_check != current_WA:
+                    stable = 0
+                else:
+                    stable += 1
+                WA_check = current_WA
+                if stable > 20 and total_user_writes > 1000000 and total_GC_writes > 50000:
+                    print("Total user writes:", total_user_writes, "   Total updates:", total_overwrites,
+                          "   Total GC writes:",
+                          total_GC_writes, "   Current WA:", round(current_WA, 2))
+                    trace_data.close()
+                    return WA_history[-1]
+                    break
             # if total_user_writes >= 550000:
                 # return sum(WA_history)/len(WA_history)
             continue
@@ -236,7 +251,8 @@ is_static):
           total_GC_writes, "   Current WA:", round(current_WA, 2))
     # Close file, then compute and return write amplification
     trace_data.close()
-    return sum(WA_history)/len(WA_history)
+    #return sum(WA_history)/len(WA_history)
+    return WA_history[-1]
 
 
 
