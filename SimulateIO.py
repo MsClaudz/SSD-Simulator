@@ -212,6 +212,7 @@ is_static):
     total_user_writes = 0
     total_GC_writes = 0
     total_overwrites = 0
+    WA_history = []
     
     # Read events from the trace file and put in a list one-by-one
     for event in trace_data:
@@ -230,12 +231,14 @@ is_static):
             total_user_writes += user_writes
             total_GC_writes += GC_writes
             total_overwrites += pages_overwritten
-            print("Total user writes:", total_user_writes, "  Total updates:", total_overwrites, "  Total GC writes:", total_GC_writes)
+            current_WA = (total_user_writes + total_GC_writes)/total_user_writes
+            WA_history.append(current_WA)
+            print("Total user writes:", total_user_writes, "   Total updates:", total_overwrites, "   Total GC writes:", total_GC_writes, "   Current WA:", current_WA)
             continue
         
     # Close file, then compute and return write amplification
     trace_data.close()
-    return (total_user_writes + total_GC_writes)/total_user_writes
+    return sum(WA_history)/len(WA_history)
 
 
 
