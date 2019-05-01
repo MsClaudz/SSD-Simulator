@@ -108,7 +108,8 @@ def split_into_partitions(freq_dict, num_partitions):
     for i in range(0, len(sorted_freq_list), pages_per_partition):
         boundary = []        
         boundary.append(sorted_freq_list[i][1])
-        boundary.append(sorted_freq_list[i + (pages_per_partition - 1)][1])
+        b = min(i + (pages_per_partition - 1), len(sorted_freq_list) - 1)
+        boundary.append(sorted_freq_list[b][1])
         partition_boundaries.append(boundary)
         for j in range(i, i + pages_per_partition):
             if j >= len(sorted_freq_list):
