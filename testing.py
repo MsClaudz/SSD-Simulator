@@ -6,15 +6,16 @@ import MakeSSD
 import SimulateIO
 
 # Choose sample file and set parameters
-# trace_file = 'traces\cheetah.cs.fiu.edu-110108-113008.1_sample.blkparse'
-trace_file = 'traces\cheetah.cs.fiu.edu-110108-113008.1_sample_10000_lines'
+trace_file = 'traces\cheetah.cs.fiu.edu-110108-113008.1_sample.blkparse'
+# trace_file = 'traces\cheetah.cs.fiu.edu-110108-113008.1_sample_100,000_lines'
+# trace_file = 'traces\cheetah.cs.fiu.edu-110108-113008.1_sample_10000_lines'
 logical_block_size_in_KB = 4.096 # default for ext4
 logical_sector_size_in_KB = 0.512 # default for ext4
 physical_page_size_in_KB = 4.096 # this value can be changed, typically it's between 2 KB and 16 KB
 pages_per_erase_block = 256 # i.e. physical block size. This value can be changed, typically it's 128 or 256, i.e. between 256 KB and 4 MB
-update_frequency_ratio = 4
+update_frequency_ratio = 8
 percent_of_overprovisioning = 28
-provisioning_is_static = False
+provisioning_is_static = True
 
 # Create dictionary using DictBuilder
 print("\nbuilding dictionary...")
@@ -39,7 +40,8 @@ print("partition boundaries:", partitions)
 
 # assign blocks to partitions
 print("\nassigning blocks to partitions...")
-partition_dict = Partitioning.assign_to_partitions(freq_dict, update_frequency_ratio, partitions)
+# partition_dict = Partitioning.assign_to_partitions(freq_dict, update_frequency_ratio, partitions)
+partition_dict = Partitioning.split_into_partitions(freq_dict, num_partitions)
 print("partitions assigned to logical block numbers")
 
 # get required number of erase blocks
@@ -55,11 +57,9 @@ print("total number of overprovisioned erase blocks required:", num_overprovisio
 print("\nmaking SSD...")
 SSD = MakeSSD.make_SSD(num_partitions, main_blocks_per_partition, num_overprovisioned_erase_blocks, provisioning_is_static)
 print("SSD made")
-print()
 
 # Run IO to compute write amplification
 print("Simulating SSD writes... this will take a while...")
 write_amplification = SimulateIO.Run_IO(trace_file, logical_block_size_in_KB, logical_sector_size_in_KB, partition_dict, SSD, pages_per_erase_block, main_blocks_per_partition, provisioning_is_static)
 print('write_amplification:', write_amplification)
-
 print("\ndone")
