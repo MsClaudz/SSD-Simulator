@@ -34,7 +34,7 @@ def make_SSD(num_partitions, main_blocks_per_partition, num_overprovisioned_eras
         j = 0
         partition = []
         while j < blocks_per_partition:
-            partition.append([])
+            partition.append(set())
             j += 1
         SSD.append(partition)
         i += 1
@@ -45,7 +45,7 @@ def make_SSD(num_partitions, main_blocks_per_partition, num_overprovisioned_eras
         j = 0
         op_partition = []
         while j < num_overprovisioned_erase_blocks:
-            op_partition.append([])
+            op_partition.append(set())
             j += 1
         SSD.append(op_partition)
 

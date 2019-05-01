@@ -53,13 +53,22 @@ def free_pages(block_num, partition):
     '''
     overwrite = 0
     for erase_block in partition:
-        try:
-            index = erase_block.index(block_num)
-            erase_block[index]= -(block_num)
+        if block_num in erase_block:
+            erase_block.discard(block_num)
+            stale = -(block_num)
+            while stale in erase_block:
+                stale -=0.00001
+                print(stale)
+            erase_block.add(stale)
             overwrite += 1
             return (partition, overwrite)
-        except ValueError:
-            continue
+        # try:
+        #     index = erase_block.index(block_num)
+        #     erase_block[index]= -(block_num)
+        #     overwrite += 1
+        #     return (partition, overwrite)
+        # except ValueError:
+        #     continue
 
     return (partition, overwrite)
 
@@ -103,12 +112,12 @@ def garbage_collect(partition, pages_per_erase_block):
 
     # Split temp into erase block-sized chunks and store them in new_partition
     for i in range(0, len(temp), pages_per_erase_block):
-        new_partition.append(temp[i:i+pages_per_erase_block])
+        new_partition.append(set(temp[i:i+pages_per_erase_block]))
 
     # Add empty erase blocks to new partition to bring it up to original size
     i = len(partition)
     while len(new_partition) < i:
-        new_partition.append([])
+        new_partition.append(set())
 
     # return (new_partition, GC_writes)
     return (new_partition, GC_writes)
@@ -131,7 +140,7 @@ def locate_space(partition, pages_per_erase_block):
     # Check each erase block for empty pages and if found, return block index
     for erase_block_index in range(len(partition)):
         if len(partition[erase_block_index]) < pages_per_erase_block:
-                return erase_block_index
+            return erase_block_index
     # Otherwise, if no empty space, require garbage collection
     raise GarbageCollectionRequired
     
@@ -170,8 +179,8 @@ main_blocks_per_partition, is_static):
             # If dynamic provisioning, assign partition an erase block from pool
             if not is_static:
                 if SSD[len(SSD) - 1]: # check if pool still has spare blocks
-                    SSD[len(SSD) - 1].remove([]) # take block from pool
-                    SSD[partition_index].append([]) #add to partition
+                    SSD[len(SSD) - 1].remove(set()) # take block from pool
+                    SSD[partition_index].append(set()) #add to partition
             SSD[partition_index], new_writes = garbage_collect(
                 SSD[partition_index], pages_per_erase_block)
             # print('SSD after garbage collection:', SSD)
@@ -185,7 +194,7 @@ main_blocks_per_partition, is_static):
             # print('Space now in this erase block:', erase_block_index)
     
     # Write block to empty space
-        SSD[partition_index][erase_block_index].append(block)
+        SSD[partition_index][erase_block_index].add(block)
         # print('SSD with block written:', SSD)
         # print('block written')
         user_writes += 1
@@ -231,7 +240,7 @@ is_static):
             current_WA = (total_user_writes + total_GC_writes)/total_user_writes
             WA_history.append(current_WA)
             if (total_user_writes % 10000 == 0):
-                print("Total user writes:", total_user_writes, "   Total updates:", total_overwrites, "   Total GC writes:", total_GC_writes, "   Current WA:", round(current_WA, 2), "    Streak:", stable)
+                print("Total user writes:", total_user_writes, "   Total updates:", total_overwrites, "   Total GC writes:", total_GC_writes, "   Current WA:", round(current_WA, 2), "    Streak:", stable,"   last WA",WA_check)
                 if WA_check != current_WA:
                     stable = 0
                 else:
