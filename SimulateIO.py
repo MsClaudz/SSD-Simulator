@@ -51,14 +51,16 @@ def free_pages(block_num, partition):
     >>> free_pages(12, [[10, 11, 12], [13, 14, 15]])
     [[10, 11, -12], [13, 14, 15]]
     '''
+    overwrite = 0
     for erase_block in partition:
         i = 0
         while i < len(erase_block):
             if erase_block[i] == block_num:
                 erase_block[i] = -(block_num)
-                return partition
+                overwrite +=1
+                return (partition, overwrite)
             i += 1
-    return partition
+    return (partition, overwrite)
 
 
 def garbage_collect(partition, pages_per_erase_block):
@@ -150,6 +152,7 @@ main_blocks_per_partition, is_static):
     '''
     user_writes = 0
     GC_writes = 0
+    overwrites = 0
 
     # For one block at a time, get assigned partition from partition_dict
     for block in blocks:
@@ -158,7 +161,8 @@ main_blocks_per_partition, is_static):
         # print('partition index =', partition_index)
 
     # Free up page(s) where that block is already written in that partition
-        free_pages(block, SSD[partition_index])
+        SSD[partition_index], pages_overwritten = free_pages(block, SSD[partition_index])
+        overwrites += pages_overwritten
         # print('SSD with freed pages:', SSD)
 
     # Attempt to locate space in the partition. 
@@ -192,7 +196,7 @@ main_blocks_per_partition, is_static):
         # print('block written')
         user_writes += 1
 
-    return (user_writes, GC_writes)
+    return (user_writes, GC_writes, overwrites)
 
 
 def Run_IO(trace_file, logical_block_size_in_KB, logical_sector_size_in_KB, 
@@ -207,6 +211,7 @@ is_static):
     trace_data = open(trace_file, 'r')
     total_user_writes = 0
     total_GC_writes = 0
+    total_overwrites = 0
     
     # Read events from the trace file and put in a list one-by-one
     for event in trace_data:
@@ -220,11 +225,12 @@ is_static):
         else:
             blocks = DictBuilder.get_blocks(event, logical_block_size_in_KB, 
             logical_sector_size_in_KB)
-            user_writes, GC_writes = write_to_partition(blocks, partition_dict, 
+            user_writes, GC_writes, pages_overwritten = write_to_partition(blocks, partition_dict, 
             SSD, pages_per_erase_block, main_blocks_per_partition, is_static)
             total_user_writes += user_writes
             total_GC_writes += GC_writes
-            print("Total writes:", total_user_writes, "     ", "Total GC writes:", total_GC_writes)
+            total_overwrites += pages_overwritten
+            print("Total user writes:", total_user_writes, "  Total updates:", total_overwrites, "  Total GC writes:", total_GC_writes)
             continue
         
     # Close file, then compute and return write amplification
