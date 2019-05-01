@@ -233,7 +233,9 @@ is_static):
             total_overwrites += pages_overwritten
             current_WA = (total_user_writes + total_GC_writes)/total_user_writes
             WA_history.append(current_WA)
-            print("Total user writes:", total_user_writes, "   Total updates:", total_overwrites, "   Total GC writes:", total_GC_writes, "   Current WA:", current_WA)
+            print("Total user writes:", total_user_writes, "   Total updates:", total_overwrites, "   Total GC writes:", total_GC_writes, "   Current WA:", round(current_WA, 2))
+            # if total_user_writes >= 550000:
+                # return sum(WA_history)/len(WA_history)
             continue
         
     # Close file, then compute and return write amplification
