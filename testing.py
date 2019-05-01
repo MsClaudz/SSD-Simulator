@@ -7,8 +7,8 @@ import SimulateIO
 import datetime
 
 # Choose sample file and set parameters
-trace_file = 'traces\cheetah.cs.fiu.edu-110108-113008.1_sample.blkparse'
-#trace_file = 'traces\cheetah.cs.fiu.edu-110108-113008.2.blkparse'
+# trace_file = 'traces\cheetah.cs.fiu.edu-110108-113008.1_sample.blkparse'
+trace_file = 'traces\cheetah.cs.fiu.edu-110108-113008.2.blkparse'
 # trace_file = 'traces\cheetah.cs.fiu.edu-110108-113008.1_sample_100,000_lines'
 # trace_file = 'traces\cheetah.cs.fiu.edu-110108-113008.1_sample_10000_lines'
 logical_block_size_in_KB = 4.096 # default for ext4
@@ -23,6 +23,13 @@ provisioning_is_static = True
 
 starttime = datetime.datetime.now()
 print(starttime)
+
+if(UFR_or_NP == 'UFR'):
+    print('testing ',UFR_or_NP, update_frequency_ratio)
+else:
+    print('testing ', UFR_or_NP, num_partitions)
+print('OP percent:', percent_of_overprovisioning)
+print('is static?:', provisioning_is_static)
 
 # Create dictionary using DictBuilder
 print("\nbuilding dictionary...")
