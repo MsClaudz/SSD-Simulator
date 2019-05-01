@@ -13,7 +13,9 @@ logical_block_size_in_KB = 4.096 # default for ext4
 logical_sector_size_in_KB = 0.512 # default for ext4
 physical_page_size_in_KB = 4.096 # this value can be changed, typically it's between 2 KB and 16 KB
 pages_per_erase_block = 256 # i.e. physical block size. This value can be changed, typically it's 128 or 256, i.e. between 256 KB and 4 MB
-update_frequency_ratio = 8
+update_frequency_ratio = 2
+num_partitions = 2
+UFR_or_NP = 'UFR'
 percent_of_overprovisioning = 28
 provisioning_is_static = True
 
@@ -23,15 +25,17 @@ freq_dict = DictBuilder.build_dict(trace_file, logical_block_size_in_KB, logical
 print("dictionary built")
 
 # Get number of partitions from update frequency ratio
-print("\ngetting number of partitions...")
-num_partitions = Partitioning.num_partitions_from_ratio(freq_dict, update_frequency_ratio)
-# print("Number of partitions:", partitions)
-print("required number of partitions:", num_partitions)
+if UFR_or_NP == 'UFR':
+    print("\ngetting number of partitions...")
+    num_partitions = Partitioning.num_partitions_from_ratio(freq_dict, update_frequency_ratio)
+    # print("Number of partitions:", partitions)
+    print("required number of partitions:", num_partitions)
 
 # Get ratio from number of partitions
-# partitions = 3
-# ratio = Partitioning.ratio_from_num_partitions(freq_dict, partitions)
-# print("Update frequency ratio:", ratio)
+if UFR_or_NP == 'NP':
+    print("\ngetting update frequency ratio...")
+    ratio = Partitioning.ratio_from_num_partitions(freq_dict, num_partitions)
+    print("Update frequency ratio:", ratio)
 
 # define partition boundaries
 print("\ngetting partition boundaries...")
@@ -59,7 +63,7 @@ SSD = MakeSSD.make_SSD(num_partitions, main_blocks_per_partition, num_overprovis
 print("SSD made")
 
 # Run IO to compute write amplification
-print("Simulating SSD writes... this will take a while...")
+print("\nSimulating SSD writes... this will take a while...")
 write_amplification = SimulateIO.Run_IO(trace_file, logical_block_size_in_KB, logical_sector_size_in_KB, partition_dict, SSD, pages_per_erase_block, main_blocks_per_partition, provisioning_is_static)
 print('write_amplification:', write_amplification)
 print("\ndone")
