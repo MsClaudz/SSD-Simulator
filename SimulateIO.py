@@ -53,13 +53,14 @@ def free_pages(block_num, partition):
     '''
     overwrite = 0
     for erase_block in partition:
-        i = 0
-        while i < len(erase_block):
-            if erase_block[i] == block_num:
-                erase_block[i] = -(block_num)
-                overwrite +=1
-                return (partition, overwrite)
-            i += 1
+        try:
+            index = erase_block.index(block_num)
+            erase_block[index]= -(block_num)
+            overwrite += 1
+            return (partition, overwrite)
+        except ValueError:
+            continue
+
     return (partition, overwrite)
 
 
@@ -80,25 +81,18 @@ def garbage_collect(partition, pages_per_erase_block):
     # Create temporary list
     temp = []
 
-    # Write full blocks with no invalid pages to temp
-    # Do not increment GC_writes
     for erase_block in partition:
+        # Write full blocks with no invalid pages to temp
+        # And Write partial blocks with no invalid pages to temp
+        # Do not increment GC_writes
         if all(i > 0 for i in erase_block) and \
-        len(erase_block) == pages_per_erase_block:
-            for page in erase_block:
-                temp.append(page)
-    
-    # Write partial blocks with no invalid pages to temp
-    # Do not increment GC_writes
-        if all(i > 0 for i in erase_block) and \
-        len(erase_block) < pages_per_erase_block:
-            for page in erase_block:
-                temp.append(page)
+        len(erase_block) <= pages_per_erase_block:
+            temp.extend(erase_block)
 
-    # Write blocks with one or more invalid pages to temp
-    # Increment GC_writes
-    for erase_block in partition:
-        if not all(i > 0 for i in erase_block):
+        # Write blocks with one or more invalid pages to temp
+        # Increment GC_writes
+        #if not all(i > 0 for i in erase_block):
+        else:
             for page in erase_block:
                 if page > 0:
                     temp.append(page)
@@ -233,11 +227,13 @@ is_static):
             total_overwrites += pages_overwritten
             current_WA = (total_user_writes + total_GC_writes)/total_user_writes
             WA_history.append(current_WA)
-            print("Total user writes:", total_user_writes, "   Total updates:", total_overwrites, "   Total GC writes:", total_GC_writes, "   Current WA:", round(current_WA, 2))
+            if (total_user_writes % 10000 == 0):
+                print("Total user writes:", total_user_writes, "   Total updates:", total_overwrites, "   Total GC writes:", total_GC_writes, "   Current WA:", round(current_WA, 2))
             # if total_user_writes >= 550000:
                 # return sum(WA_history)/len(WA_history)
             continue
-        
+    print("Total user writes:", total_user_writes, "   Total updates:", total_overwrites, "   Total GC writes:",
+          total_GC_writes, "   Current WA:", round(current_WA, 2))
     # Close file, then compute and return write amplification
     trace_data.close()
     return sum(WA_history)/len(WA_history)
