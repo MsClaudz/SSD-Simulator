@@ -231,12 +231,12 @@ is_static):
             current_WA = (total_user_writes + total_GC_writes)/total_user_writes
             WA_history.append(current_WA)
             if (total_user_writes % 10000 == 0):
-                print("Total user writes:", total_user_writes, "   Total updates:", total_overwrites, "   Total GC writes:", total_GC_writes, "   Current WA:", round(current_WA, 2), "    Streak:", stable)
-                if WA_check != current_WA:
+                print("Total user writes:", total_user_writes, "   Total updates:", total_overwrites, "   Total GC writes:", total_GC_writes, "   Current WA:", round(current_WA, 2), "    Streak:", stable, "  last WA", WA_check)
+                if WA_check != round(current_WA, 2):
                     stable = 0
                 else:
                     stable += 1
-                WA_check = current_WA
+                WA_check = round(current_WA, 2)
                 if stable > 20 and total_user_writes > 1000000 and total_GC_writes > 50000:
                     print("Total user writes:", total_user_writes, "   Total updates:", total_overwrites,
                           "   Total GC writes:",
