@@ -114,7 +114,7 @@ def build_dict(trace_file, logical_block_size_in_KB, logical_sector_size_in_KB):
     '''
     freq_dict = {}
     trace_data = open(trace_file, 'r')
-
+    num_writes = 0
     # Read events from the trace file and put in a list one-by-one
     for event in trace_data:
         event = event.split()
@@ -124,8 +124,10 @@ def build_dict(trace_file, logical_block_size_in_KB, logical_sector_size_in_KB):
             continue
         else:
             add_to_dict((get_blocks(event, logical_block_size_in_KB, logical_sector_size_in_KB)), freq_dict)
+            num_writes += 1
             continue
 
     # Close file and return updated dict
+    print("Total write events:", num_writes)
     trace_data.close()
     return freq_dict
