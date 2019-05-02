@@ -58,7 +58,6 @@ def free_pages(block_num, partition):
             stale = -(block_num)
             while stale in erase_block:
                 stale -=0.00001
-                print(stale)
             erase_block.add(stale)
             overwrite += 1
             return (partition, overwrite)
@@ -246,7 +245,7 @@ is_static):
                 else:
                     stable += 1
                 WA_check = round(current_WA, 2)
-                if stable > 20 and total_user_writes > 1000000 and total_GC_writes > 50000:
+                if stable > 20 and total_user_writes > 7500000 and total_GC_writes > 50000:
                     print("Total user writes:", total_user_writes, "   Total updates:", total_overwrites,
                           "   Total GC writes:",
                           total_GC_writes, "   Current WA:", round(current_WA, 2))
