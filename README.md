@@ -1,4 +1,5 @@
-****# SSD-Simulator
+## SSD-Simulator
+To run the simulator, configure and set desired parameters and blocktrace input file near the begining of testing.py. The simulator can then be run by running testing.py. The ChangeBlockToSet branch contains a faster but experimental implementation. To obtain the results shown in our paper, run the simulator with "cheetah.cs.fiu.edu-110108-113008.2.blkparse" as the input file and with different numbers of partions by changing the num_partitions paramenter in testing.py. The trace file can be found in the archive listed below.
 
 ## Modules:
 
