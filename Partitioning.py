@@ -67,6 +67,7 @@ def define_partitions(freq_dict, ratio, num_partitions):
         i += 1
 
     return partitions
+
     
 def assign_to_partitions(freq_dict, ratio, partitions):
     '''(dict of int:int, number, list of (int, int)) -> dict of int:int
@@ -90,3 +91,28 @@ def assign_to_partitions(freq_dict, ratio, partitions):
             i += 1
 
     return partition_dict
+
+
+def split_into_partitions(freq_dict, num_partitions):
+    '''(dict of int:int, int) -> int
+
+    An alternative method of assigning partitions. Instead of assigning blocks
+    to partitions based on ratio, sorts blocks by frequency then divides evenly
+    into partitions.
+    '''
+    pages_per_partition = int(-(-len(freq_dict)//num_partitions))
+    sorted_freq_list = sorted(freq_dict.items(), key = lambda kv:(kv[1], kv[0])) 
+    partition_dict = {}
+    partition_boundaries = []
+    k = 0
+    for i in range(0, len(sorted_freq_list), pages_per_partition):
+        boundary = []        
+        boundary.append(sorted_freq_list[i][1])
+        boundary.append(sorted_freq_list[i + (pages_per_partition - 1)][1])
+        partition_boundaries.append(boundary)
+        for j in range(i, i + pages_per_partition):
+            if j >= len(sorted_freq_list):
+                continue
+            partition_dict[sorted_freq_list[j][0]] = k
+        k +=1
+    return (partition_dict, partition_boundaries)
